@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Bodoni Moda", "Playfair Display", serif;
+
+  --color-primary: #580A2D;
+  --color-primary-light: #EFCEDA;
+  --color-bg-base: #E9E6E4;
+  --color-accent-green: #899B89;
+  --color-accent-pale: #E1E6D6;
+}
+
+@layer utilities {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #e5e7eb;
+    border-radius: 10px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #580A2D;
+  }
+}
+
+body {
+  @apply bg-[#E9E6E4] text-gray-900 selection:bg-[#580A2D]/20;
+}
