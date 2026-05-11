@@ -58,15 +58,15 @@ const ProductDetail = () => {
 
   return (
     <PageTransition>
-      <div className="min-h-screen bg-bg-base pt-24 pb-20">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+      <div className="min-h-screen bg-secondary-neutral/10 pt-24 pb-20">
+        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
           
           {/* Main Image Gallery-like Sticky Side */}
-          <div className="lg:sticky lg:top-32 space-y-4">
+          <div className="lg:sticky lg:top-40 space-y-6">
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="aspect-[4/5] overflow-hidden rounded-[3rem] bg-white shadow-2xl relative"
+              className="aspect-[4/5] overflow-hidden rounded-[4rem] bg-white shadow-[0_50px_100px_-20px_rgba(88,10,45,0.1)] relative"
             >
               <img 
                 src={product.image} 
@@ -75,20 +75,20 @@ const ProductDetail = () => {
               />
               <button 
                 onClick={() => toggleFavorite(Number(product.id))}
-                className="absolute top-8 right-8 p-4 bg-white/80 backdrop-blur-md rounded-full shadow-lg hover:bg-white transition-all transform active:scale-90"
+                className="absolute top-10 right-10 p-5 bg-white/80 backdrop-blur-xl rounded-full shadow-2xl hover:bg-white transition-all transform active:scale-90"
               >
-                <HeartIcon className={`w-5 h-5 transition-colors ${isProductFavorite ? 'fill-primary text-primary' : 'text-gray-400'}`} />
+                <HeartIcon className={`w-6 h-6 transition-colors ${isProductFavorite ? 'fill-primary-custom text-primary-custom' : 'text-gray-400'}`} />
               </button>
             </motion.div>
             
             {/* Small info badge */}
-            <div className="flex gap-4 p-6 bg-white/40 backdrop-blur-sm rounded-[2rem] border border-white/60">
-              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-primary" />
+            <div className="flex gap-6 p-10 bg-white/60 backdrop-blur-xl rounded-[3rem] border border-white/80 shadow-sm">
+              <div className="w-14 h-14 rounded-full bg-primary-custom/5 flex items-center justify-center">
+                <Sparkles className="w-6 h-6 text-primary-custom" />
               </div>
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-primary">Edición Limitada</p>
-                <p className="text-xs text-gray-500 font-light">Diseño exclusivo de Flora Boutique para esta temporada.</p>
+              <div className="space-y-1">
+                <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary-custom">Edición Limitada Fleur</p>
+                <p className="text-sm text-gray-500 font-light italic">Diseño exclusivo de Flora Atelier para esta temporada.</p>
               </div>
             </div>
           </div>
@@ -98,52 +98,52 @@ const ProductDetail = () => {
             <div>
               <button 
                 onClick={() => navigate('/')} 
-                className="flex items-center gap-2 text-[10px] uppercase tracking-widest font-bold text-gray-400 mb-8 hover:text-primary transition-colors"
+                className="flex items-center gap-2 text-[10px] uppercase tracking-[0.4em] font-bold text-gray-400 mb-10 hover:text-primary-custom transition-all"
               >
-                <ChevronLeft className="w-4 h-4" /> Volver a la boutique
+                <ChevronLeft className="w-4 h-4" /> Volver al Atelier
               </button>
-              <p className="text-primary font-bold text-xs tracking-[0.4em] uppercase mb-4">{product.category}</p>
-              <h1 className="text-5xl md:text-6xl font-serif text-gray-900 leading-tight tracking-tight">{product.name}</h1>
-              <div className="flex items-baseline gap-4 mt-6">
-                 <p className="text-4xl text-primary font-serif italic">${totalPrice.toLocaleString('es-CL')}</p>
+              <p className="text-primary-custom font-bold text-xs tracking-[0.6em] uppercase mb-4">{product.category}</p>
+              <h1 className="text-6xl md:text-7xl font-serif italic text-gray-900 leading-[0.9] tracking-tighter">{product.name}</h1>
+              <div className="flex items-baseline gap-6 mt-8">
+                 <p className="text-5xl text-primary-custom font-serif italic tracking-tighter">${totalPrice.toLocaleString('es-CL')}</p>
                  {currentSize?.extraPrice ? (
-                   <span className="text-xs text-gray-400 uppercase tracking-widest font-bold">Base + ${currentSize.extraPrice.toLocaleString('es-CL')}</span>
+                   <span className="text-[10px] text-gray-400 uppercase tracking-[0.3em] font-bold">Base + ${currentSize.extraPrice.toLocaleString('es-CL')}</span>
                  ) : null}
               </div>
             </div>
 
-            <div className="p-8 bg-white rounded-[2.5rem] border border-gray-100 shadow-sm">
-              <p className="text-gray-600 leading-relaxed text-sm font-light italic">
+            <div className="p-10 bg-white rounded-[3rem] border border-gray-50 shadow-sm">
+              <p className="text-gray-500 leading-relaxed text-lg font-light italic">
                 "{product.description}"
               </p>
             </div>
 
             {/* Size Selector */}
-            <div className="space-y-6">
-              <div className="flex justify-between items-center px-2">
-                <h3 className="text-[10px] uppercase tracking-[0.3em] font-bold text-gray-400">Seleccionar Tamaño</h3>
+            <div className="space-y-8">
+              <div className="flex justify-between items-center px-4">
+                <h3 className="text-[10px] uppercase tracking-[0.4em] font-bold text-gray-400">Dimensión de la Obra</h3>
                 <button 
                   onClick={() => setShowMeasureGuide(true)}
-                  className="text-[10px] uppercase tracking-widest font-bold text-primary flex items-center gap-1 hover:underline"
+                  className="text-[10px] uppercase tracking-[0.4em] font-bold text-primary-custom flex items-center gap-1 hover:underline"
                 >
-                  Guía de medidas <Info className="w-3 h-3" />
+                  Colección Guía <Info className="w-3 h-3" />
                 </button>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {flowerSizes.map((size) => (
                   <button
                     key={size.value}
                     onClick={() => setSelectedSize(size.value)}
-                    className={`p-4 rounded-2xl border-2 transition-all flex flex-col items-center gap-1 ${
+                    className={`p-6 rounded-[2rem] border-2 transition-all flex flex-col items-center gap-2 ${
                       selectedSize === size.value 
-                        ? 'border-primary bg-primary/[0.02]' 
+                        ? 'border-primary-custom bg-primary-custom/[0.03] shadow-lg shadow-primary-custom/5 scale-105' 
                         : 'border-white bg-white hover:border-gray-100'
                     }`}
                   >
-                    <span className={`text-xs font-bold uppercase tracking-widest ${selectedSize === size.value ? 'text-primary' : 'text-gray-900'}`}>
-                      Tamaño {size.label}
+                    <span className={`text-[11px] font-bold uppercase tracking-[0.2em] ${selectedSize === size.value ? 'text-primary-custom' : 'text-gray-900'}`}>
+                      {size.label}
                     </span>
-                    <span className="text-[10px] text-gray-400 font-medium">{size.description}</span>
+                    <span className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">{size.description}</span>
                   </button>
                 ))}
               </div>
@@ -151,9 +151,9 @@ const ProductDetail = () => {
 
             {/* Color Selector */}
             {flowerColors.length > 0 && (
-              <div className="space-y-6">
-                <h3 className="text-[10px] uppercase tracking-[0.3em] font-bold text-gray-400 px-2">Seleccionar Tono</h3>
-                <div className="flex flex-wrap gap-4 p-2">
+              <div className="space-y-8">
+                <h3 className="text-[10px] uppercase tracking-[0.4em] font-bold text-gray-400 px-4">Paleta Cromática</h3>
+                <div className="flex flex-wrap gap-5 p-4 bg-white rounded-[2.5rem] border border-gray-50 shadow-sm">
                   {flowerColors.map((color) => (
                     <button
                       key={color.name}
@@ -161,18 +161,18 @@ const ProductDetail = () => {
                       className="group relative"
                     >
                       <div 
-                        className={`w-10 h-10 rounded-full border-2 transition-all ${
-                          selectedColor === color.name ? 'border-primary scale-110 shadow-lg' : 'border-transparent shadow-sm'
+                        className={`w-12 h-12 rounded-full border-4 transition-all duration-500 ${
+                          selectedColor === color.name ? 'border-primary-custom scale-125 shadow-xl' : 'border-white shadow-inner'
                         }`}
                         style={{ backgroundColor: color.hex }}
                       />
                       <AnimatePresence>
                         {selectedColor === color.name && (
                           <motion.span 
-                            initial={{ opacity: 0, y: 10 }}
+                            initial={{ opacity: 0, y: 15 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: 10 }}
-                            className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[8px] uppercase tracking-widest font-bold text-primary whitespace-nowrap"
+                            className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-[9px] uppercase tracking-[0.3em] font-black text-primary-custom whitespace-nowrap"
                           >
                             {color.name}
                           </motion.span>
@@ -185,20 +185,20 @@ const ProductDetail = () => {
             )}
 
             {/* CTA's */}
-            <div className="flex flex-col sm:flex-row gap-4 pt-8">
+            <div className="flex flex-col sm:flex-row gap-6 pt-10">
               <button 
                 onClick={handleAddToCart}
                 disabled={isAdded}
-                className={`flex-[2] flex items-center justify-center gap-3 py-6 rounded-full font-bold uppercase tracking-widest text-xs transition-all transform active:scale-95 shadow-2xl ${
+                className={`flex-[2] flex items-center justify-center gap-4 py-8 rounded-full font-bold uppercase tracking-[0.4em] text-[11px] transition-all transform active:scale-95 shadow-[0_30px_60px_-15px_rgba(88,10,45,0.3)] ${
                   isAdded 
                     ? 'bg-green-600 text-white shadow-green-200' 
-                    : 'bg-primary text-white shadow-primary/30 hover:brightness-110'
+                    : 'bg-primary-custom text-white hover:brightness-110'
                 }`}
               >
                 {isAdded ? (
-                  <>¡Añadido! <Check className="w-5 h-5" /></>
+                  <>ADQUIRIDO <Check className="w-6 h-6" /></>
                 ) : (
-                  <>Añadir al Carrito <ShoppingBag className="w-5 h-5" /></>
+                  <>RESERVAR AHORA <ShoppingBag className="w-6 h-6" /></>
                 )}
               </button>
             </div>
@@ -278,9 +278,9 @@ const ProductDetail = () => {
               
               <button 
                 onClick={() => setShowMeasureGuide(false)}
-                className="w-full mt-10 py-5 bg-primary text-white rounded-full text-xs font-bold uppercase tracking-widest"
+                className="w-full mt-10 py-6 bg-primary-custom text-white rounded-full text-[11px] font-black uppercase tracking-[0.4em] shadow-xl shadow-primary-custom/20 active:scale-95 transition-all"
               >
-                Entendido
+                Cerrar Guía Elite
               </button>
             </motion.div>
           </>

@@ -1,6 +1,6 @@
 {
-  "name": "Flora Boutique Showcase",
-  "description": "Artisanal florist showcase with delivery in Santiago. Built with React, Shadcn, and Framer Motion.",
+  "name": "Flora Admin - Intelligent Floral OS",
+  "description": "Premium SaaS dashboard for modern florists. Features Business Intelligence, Emotional CRM, AI operation prediction, and advanced production workflow logic. Inspired by Linear and Stripe.",
   "requestFramePermissions": [],
   "majorCapabilities": []
 }

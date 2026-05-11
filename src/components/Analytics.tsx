@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { trackPageView, GA_TRACKING_ID, PIXEL_ID } from '@/src/lib/analytics';
+import { trackPageView, GA_TRACKING_ID, PIXEL_ID } from '@/lib/analytics';
 
 /**
  * Analytics Component

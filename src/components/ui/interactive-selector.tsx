@@ -54,13 +54,14 @@ export default function InteractiveSelector({ onSelect }: { onSelect: (category:
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-20">
-      <div className="text-center mb-16 space-y-4">
-        <p className="text-[10px] uppercase tracking-[0.6em] font-bold text-primary">CATÁLOGO</p>
-        <h2 className="text-6xl md:text-8xl font-serif text-gray-900 italic tracking-tight">Explora nuestras propuestas</h2>
-        <p className="text-gray-400 font-light italic">Desliza para descubrir cada una.</p>
+      <div className="text-center mb-16 space-y-6">
+        <div className="w-12 h-px bg-primary-custom/10 mx-auto" />
+        <p className="text-[10px] uppercase tracking-[0.8em] font-bold text-primary-custom">LA COLECCIÓN</p>
+        <h2 className="text-6xl md:text-8xl font-serif text-gray-900 italic tracking-tighter leading-none">Explora cada <br /> <span className="text-primary-custom">Esencia</span></h2>
+        <p className="text-gray-400 font-light italic text-xl">Piezas únicas diseñadas para evocar lo inolvidable.</p>
       </div>
 
-      <div className="flex flex-col md:flex-row h-[600px] gap-4">
+      <div className="flex flex-col md:flex-row h-[700px] gap-6">
         {catalogItems.map((item) => (
           <motion.div
             key={item.id}
