@@ -1,79 +1,139 @@
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import { CartContext } from "./Cart";
-import { User, ShoppingBag } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+import { 
+  IconSearch, 
+  IconBrandInstagram, 
+  IconUser, 
+  IconShoppingBag, 
+  IconBrandWhatsapp,
+  IconMenu2,
+  IconX
+} from "@tabler/icons-react";
 
-export default function Header({ transparent, className = "" }: { transparent?: boolean; className?: string }) {
+export default function Header({ transparent = false, lightText = false, className = "" }: { transparent?: boolean; lightText?: boolean; className?: string }) {
   const { cart, setIsOpen } = useContext(CartContext);
   const location = useLocation();
-  const isHome = location.pathname === "/";
-  
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 80);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const totalCartItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+  const isSolid = !transparent || isScrolled;
+  const headerBg = isSolid ? 'bg-white shadow-sm' : 'bg-transparent';
+  const textColor = (!isSolid && lightText) ? 'text-white drop-shadow-sm' : 'text-gray-900';
+  const logoSubColor = (!isSolid && lightText) ? 'text-white opacity-80' : 'text-[#6B0F2B]';
+
   return (
-    <nav className={`w-full z-50 p-6 transition-all duration-700 ${
-      transparent ? 'bg-transparent border-transparent pt-10' : 'bg-white/80 backdrop-blur-xl border-b border-gray-100 py-4 shadow-sm'
-    } ${className}`}>
-      <div className="max-w-7xl mx-auto w-full flex justify-between items-center">
-        <Link to="/" className="group flex items-center gap-3">
-          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-serif font-bold text-2xl shadow-lg group-hover:rotate-12 transition-all transition-transform ${
-            transparent ? 'bg-white text-primary-custom shadow-white/10' : 'bg-primary-custom text-white shadow-primary-custom/20'
-          }`}>F</div>
-          <div className={`text-2xl font-serif font-bold tracking-tighter transition-colors ${transparent ? 'text-white' : 'text-gray-900'}`}>
-            FLORA<span className={`font-light italic ${transparent ? 'text-white/60' : 'text-primary-custom'}`}>Boutique</span>
+    <>
+      <nav className={`w-full z-[100] transition-all duration-200 ease-in-out ${headerBg} ${className}`}>
+        <div className="max-w-[1400px] mx-auto w-full px-6 flex items-center justify-between h-20">
+          
+          {/* Left: Desktop Nav / Mobile Hamburger */}
+          <div className="hidden lg:flex flex-1 items-center gap-8 text-[11px] uppercase tracking-[0.08em] font-sans font-bold">
+            <Link to="/catalogo" className={`${textColor} hover:opacity-75 transition-opacity`}>Catálogo</Link>
+            <Link to="/delivery" className={`${textColor} hover:opacity-75 transition-opacity`}>Delivery</Link>
+            <Link to="/nosotros" className={`${textColor} hover:opacity-75 transition-opacity`}>Nosotros</Link>
+            <Link to="/contacto" className={`${textColor} hover:opacity-75 transition-opacity`}>Contacto</Link>
           </div>
-        </Link>
-        
-        <div className="hidden md:flex space-x-12 text-[10px] uppercase tracking-[0.3em] font-bold items-center">
-          <a 
-            href={isHome ? "#catalogo" : "/#catalogo"} 
-            className={`transition-colors ${transparent ? 'text-white/60 hover:text-white' : 'text-gray-400 hover:text-primary-custom'}`}
-          >
-            Catálogo
-          </a>
-          <a 
-            href="#" 
-            className={`transition-colors ${transparent ? 'text-white/60 hover:text-white' : 'text-gray-400 hover:text-primary-custom'}`}
-          >
-            Galería
-          </a>
-          <a 
-            href={isHome ? "#como-pedir" : "/#como-pedir"} 
-            className={`transition-colors ${transparent ? 'text-white/60 hover:text-white' : 'text-gray-400 hover:text-primary-custom'}`}
-          >
-            Cómo pedir
-          </a>
-          <a 
-            href="#" 
-            className={`transition-colors ${transparent ? 'text-white/60 hover:text-white' : 'text-gray-400 hover:text-primary-custom'}`}
-          >
-            Contacto
-          </a>
           
-          <div className={`h-4 w-px ${transparent ? 'bg-white/20' : 'bg-gray-100'}`} />
-          
-          <Link 
-            to="/perfil" 
-            className={`p-3 rounded-2xl transition-all ${
-              transparent ? 'bg-white/10 text-white hover:bg-white/20' : 'bg-gray-50 text-gray-400 hover:text-primary-custom'
-            }`}
-          >
-             <User className="w-5 h-5" />
-          </Link>
-          
-          <button 
-            onClick={() => setIsOpen(true)}
-            className="flex items-center gap-4 group"
-          >
-            <div className="relative">
-              <ShoppingBag className={`w-6 h-6 transition-colors ${transparent ? 'text-white' : 'text-gray-900 group-hover:text-primary-custom'}`} />
-              {cart.reduce((a, b) => a + b.quantity, 0) > 0 && (
-                <span className="absolute -top-2 -right-2 bg-primary-custom text-white text-[8px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow-lg animate-bounce">
-                  {cart.reduce((a, b) => a + b.quantity, 0)}
+          <div className="flex lg:hidden flex-1 items-center">
+            <button onClick={() => setMobileMenuOpen(true)} className={`${textColor}`}>
+              <IconMenu2 stroke={1.5} />
+            </button>
+          </div>
+
+          {/* Center: Logo */}
+          <div className="flex-1 flex justify-center">
+            <Link to="/" className="flex flex-col items-center">
+              <span className={`text-2xl font-serif font-bold tracking-tighter leading-none ${textColor}`}>
+                FLORA
+              </span>
+              <span className={`text-[8px] font-sans font-black uppercase tracking-[1.4em] leading-none mt-1.5 pl-[1.4em] ${logoSubColor}`}>
+                BOUTIQUE
+              </span>
+            </Link>
+          </div>
+
+          {/* Right: Icons & CTA */}
+          <div className="flex flex-1 items-center justify-end gap-5">
+            <div className={`hidden md:flex items-center gap-5 ${textColor}`}>
+              <button className="hover:opacity-75 transition-opacity"><IconSearch stroke={1.5} className="w-5 h-5" /></button>
+              <a href="https://instagram.com/floraboutique.cl" target="_blank" rel="noreferrer" className="hover:opacity-75 transition-opacity"><IconBrandInstagram stroke={1.5} className="w-5 h-5" /></a>
+              <button className="hover:opacity-75 transition-opacity"><IconUser stroke={1.5} className="w-5 h-5" /></button>
+            </div>
+            
+            <button 
+              onClick={() => setIsOpen(true)}
+              className={`relative ${textColor} hover:opacity-75 transition-opacity`}
+            >
+              <IconShoppingBag stroke={1.5} className="w-5 h-5" />
+              {totalCartItems > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 bg-[#6B0F2B] text-white w-[18px] h-[18px] rounded-full flex items-center justify-center text-[9px] font-bold">
+                  {totalCartItems}
                 </span>
               )}
-            </div>
-          </button>
+            </button>
+
+            <a 
+              href="https://wa.me/56939276233" 
+              target="_blank" 
+              rel="noreferrer"
+              className="hidden sm:flex items-center gap-2 bg-[#6B0F2B] text-white px-5 py-2.5 rounded-full text-sm hover:brightness-110 transition-all font-medium"
+            >
+               Pedir ahora
+               <IconBrandWhatsapp stroke={1.5} className="w-4 h-4" />
+            </a>
+          </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+
+      {/* Mobile Menu Overlay */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-[110] bg-black/20 backdrop-blur-sm lg:hidden" onClick={() => setMobileMenuOpen(false)}>
+          <div className="absolute top-0 left-0 w-80 h-full bg-white shadow-2xl p-6 flex flex-col" onClick={(e) => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-10">
+              <span className="text-lg font-serif italic text-[#6B0F2B]">Menú</span>
+              <button onClick={() => setMobileMenuOpen(false)}>
+                <IconX stroke={1.5} className="text-gray-900" />
+              </button>
+            </div>
+            
+            <div className="flex flex-col gap-6 text-[13px] uppercase tracking-[0.1em] font-sans font-bold text-gray-900">
+              <Link to="/catalogo" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#6B0F2B]">Catálogo</Link>
+              <Link to="/delivery" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#6B0F2B]">Delivery</Link>
+              <Link to="/nosotros" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#6B0F2B]">Nosotros</Link>
+              <Link to="/contacto" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#6B0F2B]">Contacto</Link>
+            </div>
+
+            <div className="mt-auto space-y-4">
+              <div className="flex gap-4 mb-6">
+                <IconSearch stroke={1.5} className="w-5 h-5 text-gray-600" />
+                <a href="https://instagram.com/floraboutique.cl" target="_blank" rel="noreferrer"><IconBrandInstagram stroke={1.5} className="w-5 h-5 text-gray-600" /></a>
+                <IconUser stroke={1.5} className="w-5 h-5 text-gray-600" />
+              </div>
+              <a 
+                href="https://wa.me/56939276233" 
+                target="_blank" 
+                rel="noreferrer"
+                className="flex items-center justify-center gap-2 bg-[#6B0F2B] text-white px-5 py-4 rounded-full text-sm font-medium w-full"
+              >
+                 Pedir ahora
+                 <IconBrandWhatsapp stroke={1.5} className="w-4 h-4" />
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

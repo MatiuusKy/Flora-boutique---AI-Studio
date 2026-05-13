@@ -11,6 +11,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { generatePDF } from "../lib/orderServices";
+import { formatDate } from "../lib/utils";
 
 const Success = () => {
   const { cart, clearCart } = useContext(CartContext);
@@ -61,7 +62,7 @@ const Success = () => {
           <motion.div 
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center text-white mx-auto mb-6 shadow-xl shadow-green-200"
+            className="w-20 h-20 bg-[#6B0F2B] rounded-full flex items-center justify-center text-white mx-auto mb-6 shadow-xl shadow-[#6B0F2B]/20"
           >
             <CheckCircle2 className="w-10 h-10" />
           </motion.div>
@@ -120,12 +121,12 @@ const Success = () => {
             <div className="p-10 md:p-14 bg-gray-50/30">
                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                  <div className="flex gap-4">
-                   <div className="p-3 bg-white rounded-2xl border border-gray-100 text-primary">
+                   <div className="p-3 bg-white rounded-2xl border border-gray-100 text-[#6B0F2B]">
                      <Mail className="w-5 h-5" />
                    </div>
                    <div>
                      <p className="text-[9px] uppercase tracking-widest font-bold text-gray-400">Confirmación Email</p>
-                     <p className="text-xs text-gray-600 font-medium leading-relaxed mt-1">Boleta y detalles enviados a {order.email}.</p>
+                     <p className="text-xs text-gray-600 font-medium leading-relaxed mt-1">Boleta y detalles enviados a {order.email || 'tu correo electrónico'}.</p>
                    </div>
                  </div>
                  <div className="flex gap-4">
@@ -134,7 +135,7 @@ const Success = () => {
                    </div>
                    <div>
                      <p className="text-[9px] uppercase tracking-widest font-bold text-gray-400">Seguimiento WhatsApp</p>
-                     <p className="text-xs text-gray-600 font-medium leading-relaxed mt-1">Recibirás fotos de tu ramo el {order.deliveryDate}.</p>
+                     <p className="text-xs text-gray-600 font-medium leading-relaxed mt-1">Recibirás fotos de tu ramo el {formatDate(order.deliveryDate)}.</p>
                    </div>
                  </div>
                </div>
@@ -144,15 +145,15 @@ const Success = () => {
           <div className="mt-12 flex flex-col md:flex-row gap-6">
             <button 
               onClick={() => navigate('/')}
-              className="flex-1 bg-white border border-gray-100 px-8 py-5 rounded-full text-sm font-bold uppercase tracking-widest text-gray-400 hover:text-gray-900 hover:border-gray-900 transition-all flex items-center justify-center gap-3"
+              className="flex-1 bg-white border border-gray-100 px-8 py-5 rounded-full text-sm font-bold text-gray-500 hover:text-gray-900 hover:border-gray-900 transition-all flex items-center justify-center gap-3"
             >
               Volver al inicio
             </button>
             <button 
               onClick={() => window.print()}
-              className="flex-1 bg-primary text-white px-8 py-5 rounded-full text-sm font-bold uppercase tracking-widest shadow-2xl shadow-primary/20 hover:brightness-110 transition-all flex items-center justify-center gap-3"
+              className="flex-1 bg-[#6B0F2B] text-white px-8 py-5 rounded-full text-sm font-bold shadow-2xl shadow-[#6B0F2B]/20 hover:brightness-110 transition-all flex items-center justify-center gap-3"
             >
-              Imprimir Recibo <Printer className="w-4 h-4" />
+              Imprimir recibo <Printer className="w-4 h-4" />
             </button>
           </div>
         </main>

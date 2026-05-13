@@ -4,7 +4,8 @@ import PageTransition from "../components/PageTransition";
 import { analytics } from "../lib/analytics";
 import { useEffect, useContext, useState, useMemo } from "react";
 import { CartContext } from "../components/Cart";
-import { Check, ShoppingBag, Sparkles, Heart as HeartIcon, ChevronLeft, Info } from "lucide-react";
+import { Check, ShoppingBag, Heart as HeartIcon, ChevronLeft, Info, X } from "lucide-react";
+import { IconSparkles } from "@tabler/icons-react";
 import { products } from "../data/products";
 import { FLOWER_SIZES, FLOWER_COLORS, FlowerType } from "../types";
 
@@ -84,7 +85,7 @@ const ProductDetail = () => {
             {/* Small info badge */}
             <div className="flex gap-6 p-10 bg-white/60 backdrop-blur-xl rounded-[3rem] border border-white/80 shadow-sm">
               <div className="w-14 h-14 rounded-full bg-primary-custom/5 flex items-center justify-center">
-                <Sparkles className="w-6 h-6 text-primary-custom" />
+                <IconSparkles className="w-6 h-6 text-primary-custom" />
               </div>
               <div className="space-y-1">
                 <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary-custom">Edición Limitada Fleur</p>
@@ -129,23 +130,30 @@ const ProductDetail = () => {
                   Colección Guía <Info className="w-3 h-3" />
                 </button>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {flowerSizes.map((size) => (
-                  <button
-                    key={size.value}
-                    onClick={() => setSelectedSize(size.value)}
-                    className={`p-6 rounded-[2rem] border-2 transition-all flex flex-col items-center gap-2 ${
-                      selectedSize === size.value 
-                        ? 'border-primary-custom bg-primary-custom/[0.03] shadow-lg shadow-primary-custom/5 scale-105' 
-                        : 'border-white bg-white hover:border-gray-100'
-                    }`}
-                  >
-                    <span className={`text-[11px] font-bold uppercase tracking-[0.2em] ${selectedSize === size.value ? 'text-primary-custom' : 'text-gray-900'}`}>
-                      {size.label}
-                    </span>
-                    <span className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">{size.description}</span>
-                  </button>
-                ))}
+              <div className="flex overflow-x-auto pb-4 snap-x snap-mandatory hide-scrollbar -mx-2 px-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                <style>{`
+                  .hide-scrollbar::-webkit-scrollbar {
+                    display: none;
+                  }
+                `}</style>
+                <div className="flex gap-4 w-max">
+                  {flowerSizes.map((size) => (
+                    <button
+                      key={size.value}
+                      onClick={() => setSelectedSize(size.value)}
+                      className={`py-4 px-6 rounded-full border-2 transition-all flex flex-col items-center justify-center min-w-[100px] shrink-0 snap-start ${
+                        selectedSize === size.value 
+                          ? 'border-[#6B0F2B] bg-[#FBF0F3] shadow-sm' 
+                          : 'border-gray-200 bg-white hover:border-[#6B0F2B]/50'
+                      }`}
+                    >
+                      <span className={`text-sm font-bold uppercase tracking-widest ${selectedSize === size.value ? 'text-[#6B0F2B]' : 'text-gray-900'}`}>
+                        {size.label}
+                      </span>
+                      <span className="text-[10px] text-gray-400 font-medium uppercase tracking-widest mt-1">{size.description}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -196,9 +204,9 @@ const ProductDetail = () => {
                 }`}
               >
                 {isAdded ? (
-                  <>ADQUIRIDO <Check className="w-6 h-6" /></>
+                  <>Adquirido <Check className="w-6 h-6" /></>
                 ) : (
-                  <>RESERVAR AHORA <ShoppingBag className="w-6 h-6" /></>
+                  <>Reservar ahora <ShoppingBag className="w-6 h-6" /></>
                 )}
               </button>
             </div>
@@ -238,7 +246,7 @@ const ProductDetail = () => {
               <div className="flex justify-between items-center mb-10">
                 <h2 className="text-3xl font-serif italic">Guía de Medidas</h2>
                 <button onClick={() => setShowMeasureGuide(false)} className="p-2 hover:bg-gray-50 rounded-full">
-                  <Info className="w-5 h-5 text-gray-400 rotate-180" />
+                  <X className="w-5 h-5 text-gray-400" />
                 </button>
               </div>
               
@@ -278,9 +286,9 @@ const ProductDetail = () => {
               
               <button 
                 onClick={() => setShowMeasureGuide(false)}
-                className="w-full mt-10 py-6 bg-primary-custom text-white rounded-full text-[11px] font-black uppercase tracking-[0.4em] shadow-xl shadow-primary-custom/20 active:scale-95 transition-all"
+                className="w-full mt-10 py-4 bg-[#6B0F2B] text-white rounded-full text-sm font-medium shadow-xl shadow-[#6B0F2B]/20 active:scale-95 transition-all"
               >
-                Cerrar Guía Elite
+                Cerrar guía
               </button>
             </motion.div>
           </>

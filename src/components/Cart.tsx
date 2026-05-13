@@ -4,7 +4,7 @@ import { X, ShoppingBag, Plus, Minus, Trash2, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface CartItem {
-  id: number;
+  id: number | string;
   name: string;
   price: number;
   image: string;
@@ -14,8 +14,8 @@ interface CartItem {
 export const CartContext = React.createContext<{
   cart: CartItem[];
   addToCart: (product: any) => void;
-  removeFromCart: (id: number) => void;
-  updateQuantity: (id: number, delta: number) => void;
+  removeFromCart: (id: number | string) => void;
+  updateQuantity: (id: number | string, delta: number) => void;
   clearCart: () => void;
   favorites: number[];
   toggleFavorite: (id: number) => void;
@@ -36,12 +36,19 @@ export const CartContext = React.createContext<{
 });
 
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const [cart, setCart] = useState<CartItem[]>(() => {
+    const saved = localStorage.getItem('flora_cart');
+    return saved ? JSON.parse(saved) : [];
+  });
   const [favorites, setFavorites] = useState<number[]>(() => {
     const saved = localStorage.getItem('flora_favorites');
     return saved ? JSON.parse(saved) : [];
   });
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem('flora_cart', JSON.stringify(cart));
+  }, [cart]);
 
   useEffect(() => {
     localStorage.setItem('flora_favorites', JSON.stringify(favorites));
@@ -75,11 +82,11 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     setIsOpen(true);
   }, []);
 
-  const removeFromCart = useCallback((id: number) => {
+  const removeFromCart = useCallback((id: number | string) => {
     setCart(prev => prev.filter(item => item.id !== id));
   }, []);
 
-  const updateQuantity = useCallback((id: number, delta: number) => {
+  const updateQuantity = useCallback((id: number | string, delta: number) => {
     setCart(prev => prev.map(item => 
       item.id === id ? { ...item, quantity: Math.max(1, item.quantity + delta) } : item
     ));
@@ -160,7 +167,7 @@ const CartDrawer = () => {
                     key={item.id} 
                     className="flex gap-4 group"
                   >
-                    <div className="w-24 h-24 rounded-2xl overflow-hidden bg-gray-100 flex-shrink-0">
+                    <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
                       <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                     </div>
                     <div className="flex-1 flex flex-col justify-between py-1">
@@ -174,17 +181,20 @@ const CartDrawer = () => {
                             <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
-                        <p className="text-sm font-serif italic text-gray-500 mt-1">
-                          ${item.price.toLocaleString('es-CL')}
-                        </p>
+                        {(item as any).selectedSize && (
+                          <span className="text-[8px] uppercase tracking-widest font-black opacity-50 block mt-1">
+                            • {(item as any).selectedSize} • {(item as any).selectedColor}
+                          </span>
+                        )}
                       </div>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3 bg-gray-50 px-3 py-1.5 rounded-full">
-                          <button onClick={() => updateQuantity(item.id, -1)} className="text-gray-400 hover:text-gray-900"><Minus className="w-3 h-3" /></button>
+                      <div className="flex items-center justify-between mt-2">
+                        <div className="flex items-center gap-3">
+                          <button onClick={() => updateQuantity(item.id, -1)} className="w-6 h-6 flex items-center justify-center border border-[#6B0F2B] text-[#6B0F2B] rounded transition-colors hover:bg-[#6B0F2B] hover:text-white"><Minus className="w-3 h-3" /></button>
                           <span className="text-xs font-bold w-4 text-center">{item.quantity}</span>
-                          <button onClick={() => updateQuantity(item.id, 1)} className="text-gray-400 hover:text-gray-900"><Plus className="w-3 h-3" /></button>
+                          <button onClick={() => updateQuantity(item.id, 1)} className="w-6 h-6 flex items-center justify-center border border-[#6B0F2B] text-[#6B0F2B] rounded transition-colors hover:bg-[#6B0F2B] hover:text-white"><Plus className="w-3 h-3" /></button>
                         </div>
                         <span className="text-sm font-bold text-gray-900">
+                          <span className="text-gray-400 font-normal mr-1">${item.price.toLocaleString('es-CL')} x {item.quantity} =</span>
                           ${(item.price * item.quantity).toLocaleString('es-CL')}
                         </span>
                       </div>
@@ -196,20 +206,30 @@ const CartDrawer = () => {
 
             {cart.length > 0 && (
               <div className="p-8 border-t border-gray-100 bg-gray-50/50 space-y-4">
-                <div className="flex justify-between items-center text-gray-900">
+                <div className="flex justify-between items-center text-gray-900 pb-4 border-b border-gray-200/50">
                   <span className="text-[10px] uppercase tracking-widest font-bold opacity-40">Subtotal</span>
-                  <span className="text-2xl font-serif italic">${total.toLocaleString('es-CL')}</span>
+                  <span className="text-2xl font-serif italic text-[#6B0F2B]">${total.toLocaleString('es-CL')}</span>
                 </div>
-                <button 
-                  onClick={() => {
-                    setIsOpen(false);
-                    navigate('/checkout');
-                  }}
-                  className="w-full bg-primary text-white py-4 rounded-full font-medium shadow-xl shadow-primary/20 flex items-center justify-center gap-2 group hover:gap-4 transition-all"
-                >
-                  Finalizar Compra
-                  <ArrowRight className="w-4 h-4" />
-                </button>
+                <div className="pt-3 flex flex-col gap-2">
+                  <button 
+                    onClick={() => {
+                      setIsOpen(false);
+                      navigate('/checkout');
+                    }}
+                    className="w-full bg-[#6B0F2B] text-white py-[14px] rounded-full font-medium shadow-xl shadow-[#6B0F2B]/20 flex items-center justify-center gap-2 transition-all text-sm"
+                  >
+                    Finalizar compra
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                  <button 
+                    onClick={() => {
+                      setIsOpen(false);
+                    }}
+                    className="w-full bg-transparent border border-[#6B0F2B] text-[#6B0F2B] py-[14px] rounded-full font-medium flex items-center justify-center transition-all hover:bg-gray-50 text-sm"
+                  >
+                    Seguir comprando
+                  </button>
+                </div>
               </div>
             )}
           </motion.div>

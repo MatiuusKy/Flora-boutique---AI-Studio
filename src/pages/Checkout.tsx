@@ -3,22 +3,20 @@ import { motion, AnimatePresence } from "motion/react";
 import { CartContext } from "../components/Cart";
 import PageTransition from "../components/PageTransition";
 import { 
-  ShieldCheck, 
-  Truck, 
-  CreditCard, 
   ChevronLeft, 
-  Wallet, 
-  Banknote,
   AlertCircle,
   CheckCircle2,
-  User,
-  LogIn,
-  Globe,
-  Facebook
+  Check,
+  Lock,
+  Mail,
+  ChevronDown,
+  ChevronUp
 } from "lucide-react";
+import { IconShieldCheck, IconTruckDelivery } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import { validateRut, formatRut } from "../lib/rutUtils";
 import { supabase } from "../lib/supabase";
+import { formatDate } from "../lib/utils";
 
 const SANTIAGO_COMUNAS = [
   "Cerrillos", "Cerro Navia", "Conchalí", "El Bosque", "Estación Central", 
@@ -26,22 +24,26 @@ const SANTIAGO_COMUNAS = [
   "La Pintana", "La Reina", "Las Condes", "Lo Barnechea", "Lo Espejo", 
   "Lo Prado", "Macul", "Maipú", "Ñuñoa", "Pedro Aguirre Cerda", "Peñalolén", 
   "Providencia", "Pudahuel", "Quilicura", "Quinta Normal", "Recoleta", 
-  "Renca", "San Joaquín", "San Miguel", "San Ramón", "Santiago", "Vitacura", 
-  "Puente Alto", "Pirque", "San José de Maipo", "San Bernardo", "Buin", 
-  "Calera de Tango", "Paine", "Melipilla", "Alhué", "Curacaví", "María Pinto", 
-  "San Pedro", "Talagante", "El Monte", "Isla de Maipo", "Padre Hurtado", 
-  "Peñaflor", "Colina", "Lampa", "Tiltil"
+  "Renca", "San Joaquín", "San Miguel", "San Ramón", "Santiago", "Vitacura"
 ].sort();
 
-const InputField = ({ label, name, placeholder, type = "text", fullWidth = false, value, onChange, error, prefix }: any) => (
-  <div className={`space-y-1.5 ${fullWidth ? 'md:col-span-2' : ''}`}>
-    <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400 block px-1">
+// Labels Style Utility
+const labelStyle = "text-[11px] uppercase tracking-[0.08em] font-sans font-bold text-gray-500 block px-1 mb-1.5";
+
+const InputField = ({ label, name, placeholder, type = "text", fullWidth = false, value, onChange, onBlur, error, success, prefix, icon: Icon, maxLength }: any) => (
+  <div className={`space-y-1 ${fullWidth ? 'md:col-span-2' : ''}`}>
+    <label className={labelStyle}>
       {label}
     </label>
     <div className="relative group">
       {prefix && (
-        <span className="absolute left-6 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-400 pointer-events-none">
+        <span className="absolute left-5 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-500 pointer-events-none z-10">
           {prefix}
+        </span>
+      )}
+      {Icon && (
+        <span className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none z-10">
+          <Icon className="w-5 h-5" />
         </span>
       )}
       <input 
@@ -49,20 +51,29 @@ const InputField = ({ label, name, placeholder, type = "text", fullWidth = false
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(name, e.target.value)}
-        className={`w-full bg-white border-2 px-6 py-4 text-sm rounded-2xl transition-all outline-none ${prefix ? 'pl-20' : ''} ${
+        onBlur={() => onBlur && onBlur(name, value)}
+        maxLength={maxLength}
+        className={`w-full bg-white border-2 px-5 py-4 text-sm rounded-2xl transition-all outline-none font-sans ${prefix ? 'pl-16' : ''} ${Icon ? 'pl-14' : ''} ${
           error 
-            ? 'border-red-200 focus:border-red-300 bg-red-50/10' 
-            : 'border-transparent focus:border-primary/20 group-hover:border-gray-100'
+            ? 'border-red-200 focus:border-red-400 bg-red-50/10' 
+            : success
+              ? 'border-[#16a34a] focus:border-[#16a34a] bg-green-50/10'
+              : 'border-gray-200 focus:border-[#6B0F2B] hover:border-gray-300'
         }`}
       />
+      {success && !error && (
+        <span className="absolute right-5 top-1/2 -translate-y-1/2 text-[#16a34a] pointer-events-none">
+          <CheckCircle2 className="w-5 h-5" />
+        </span>
+      )}
     </div>
     <AnimatePresence>
       {error && (
         <motion.div 
-          initial={{ opacity: 0, y: -10 }}
+          initial={{ opacity: 0, y: -5 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          className="flex items-center gap-1.5 text-red-500 mt-2 px-2"
+          exit={{ opacity: 0, y: -5 }}
+          className="flex items-center gap-1.5 text-red-500 mt-1.5 px-2"
         >
           <AlertCircle className="w-3.5 h-3.5" />
           <span className="text-[10px] font-bold uppercase tracking-wider">{error}</span>
@@ -73,18 +84,18 @@ const InputField = ({ label, name, placeholder, type = "text", fullWidth = false
 );
 
 const SelectField = ({ label, name, options, value, onChange, error, fullWidth = false }: any) => (
-  <div className={`space-y-1.5 ${fullWidth ? 'md:col-span-2' : ''}`}>
-    <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400 block px-1">
+  <div className={`space-y-1 ${fullWidth ? 'md:col-span-2' : ''}`}>
+    <label className={labelStyle}>
       {label}
     </label>
     <div className="relative group">
       <select 
         value={value}
         onChange={(e) => onChange(name, e.target.value)}
-        className={`w-full bg-white border-2 px-6 py-4 text-sm rounded-2xl transition-all outline-none appearance-none cursor-pointer ${
+        className={`w-full bg-white border-2 px-5 py-4 text-sm rounded-2xl transition-all outline-none appearance-none cursor-pointer font-sans ${
           error 
-            ? 'border-red-200 focus:border-red-300 bg-red-50/10' 
-            : 'border-transparent focus:border-primary/20 group-hover:border-gray-100'
+            ? 'border-red-200 focus:border-red-400 bg-red-50/10' 
+            : 'border-gray-200 focus:border-[#6B0F2B] hover:border-gray-300'
         }`}
       >
         <option value="">Seleccionar comuna...</option>
@@ -92,19 +103,17 @@ const SelectField = ({ label, name, options, value, onChange, error, fullWidth =
           <option key={opt} value={opt}>{opt}</option>
         ))}
       </select>
-      <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none opacity-40">
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M2 4L6 8L10 4" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
+      <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-40">
+        <ChevronDown className="w-5 h-5" />
       </div>
     </div>
     <AnimatePresence>
       {error && (
         <motion.div 
-          initial={{ opacity: 0, y: -10 }}
+          initial={{ opacity: 0, y: -5 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          className="flex items-center gap-1.5 text-red-500 mt-2 px-2"
+          exit={{ opacity: 0, y: -5 }}
+          className="flex items-center gap-1.5 text-red-500 mt-1.5 px-2"
         >
           <AlertCircle className="w-3.5 h-3.5" />
           <span className="text-[10px] font-bold uppercase tracking-wider">{error}</span>
@@ -114,13 +123,88 @@ const SelectField = ({ label, name, options, value, onChange, error, fullWidth =
   </div>
 );
 
+const CustomDatePicker = ({ selectedDate, onSelect, error }: { selectedDate: string, onSelect: (d: string) => void, error: string }) => {
+  const dates = Array.from({ length: 14 }).map((_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() + i);
+    return { date: d, disabled: i === 0 };
+  });
+
+  const getDayName = (d: Date) => d.toLocaleDateString('es-CL', { weekday: 'short' });
+  const getDayNum = (d: Date) => d.getDate();
+  const getMonthName = (d: Date) => d.toLocaleDateString('es-CL', { month: 'short' });
+
+  return (
+    <div className="w-full space-y-1 relative">
+      <label className={labelStyle}>Fecha de Entrega</label>
+      <div className="overflow-x-auto pb-4 hide-scrollbar px-1" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        <style>{`
+          .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+          }
+        `}</style>
+        <div className="flex gap-3 w-max pr-6">
+          {dates.map((item, i) => {
+            const dateStr = item.date.toISOString().split('T')[0];
+            const isSelected = selectedDate === dateStr;
+            const disabled = item.disabled;
+
+            return (
+              <button
+                key={i}
+                type="button"
+                disabled={disabled}
+                onClick={() => !disabled && onSelect(dateStr)}
+                className={`flex flex-col items-center justify-center w-[72px] h-[88px] rounded-2xl border-2 transition-all shrink-0 font-sans ${
+                  disabled
+                    ? 'opacity-35 cursor-not-allowed border-gray-200 bg-gray-50'
+                    : isSelected 
+                      ? 'border-[#6B0F2B] bg-[#FBF0F3] shadow-sm' 
+                      : 'border-gray-200 bg-white hover:border-[#6B0F2B] hover:bg-gray-50'
+                }`}
+              >
+                <span className={`text-[10px] uppercase font-bold ${isSelected && !disabled ? 'text-[#6B0F2B]' : 'text-gray-400'}`}>
+                  {getDayName(item.date)}
+                </span>
+                <span className={`text-2xl font-serif mt-1 ${isSelected && !disabled ? 'text-[#6B0F2B]' : 'text-gray-900'}`}>
+                  {getDayNum(item.date)}
+                </span>
+                <span className={`text-[10px] uppercase font-bold ${isSelected && !disabled ? 'text-[#6B0F2B]' : 'text-gray-400'}`}>
+                  {getMonthName(item.date)}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+      <AnimatePresence>
+        {error && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex items-center gap-1.5 text-red-500 px-2 mt-1">
+            <AlertCircle className="w-3.5 h-3.5" />
+            <span className="text-[10px] font-bold uppercase tracking-wider">{error}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
+const STEPS = [
+  { id: 1, title: 'Contacto' },
+  { id: 2, title: 'Entrega' },
+  { id: 3, title: 'Dirección' },
+  { id: 4, title: 'Pago' },
+  { id: 5, title: 'Confirmación' },
+];
+
 const Checkout = () => {
   const { cart, total } = useContext(CartContext);
   const navigate = useNavigate();
-
+  const [activeStep, setActiveStep] = useState(1);
   const [session, setSession] = useState<any>(null);
-  const [isGuest, setIsGuest] = useState(false);
-  const [loading, setLoading] = useState(true);
+  
+  const [mobileSummaryOpen, setMobileSummaryOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
     rut: "",
@@ -135,166 +219,105 @@ const Checkout = () => {
   });
 
   const [deliveryMethod, setDeliveryMethod] = useState<'domicilio' | 'retiro'>('domicilio');
-  const [shippingCost, setShippingCost] = useState(5000);
+  const [paymentMethod, setPaymentMethod] = useState<'webpay' | 'mercadopago' | 'transferencia'>('webpay');
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<'flow' | 'transferencia'>('flow');
 
-  useEffect(() => {
-    if (deliveryMethod === 'domicilio') {
-      setShippingCost(5000);
-    } else {
-      setShippingCost(3500);
-    }
-  }, [deliveryMethod]);
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
+  const shippingCost = deliveryMethod === 'domicilio' ? 5000 : 0;
   const finalTotal = total + shippingCost;
 
   useEffect(() => {
-    if (supabase) {
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        setSession(session);
-        if (session?.user) {
-          loadProfile(session.user.id);
-        }
-        setLoading(false);
-      });
-
-      const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-        setSession(session);
-        if (session?.user) {
-          loadProfile(session.user.id);
-        }
-      });
-
-      return () => subscription.unsubscribe();
-    } else {
-      setLoading(false);
+    const savedData = localStorage.getItem('flora_checkout_data');
+    if (savedData) {
+      try {
+        const parsed = JSON.parse(savedData);
+        if (parsed.formData) setFormData(parsed.formData);
+        if (parsed.deliveryMethod) setDeliveryMethod(parsed.deliveryMethod);
+        if (parsed.paymentMethod) setPaymentMethod(parsed.paymentMethod);
+      } catch (e) {}
     }
   }, []);
 
-  const loadProfile = async (userId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
-      
-      if (data) {
-        setFormData(prev => ({
-          ...prev,
-          rut: data.rut || "",
-          nombre: data.full_name || "",
-          email: data.email || "",
-          telefono: data.phone || "",
-          direccion: data.address || "",
-          comuna: data.comuna || ""
-        }));
+  useEffect(() => {
+    localStorage.setItem('flora_checkout_data', JSON.stringify({
+      formData,
+      deliveryMethod,
+      paymentMethod
+    }));
+  }, [formData, deliveryMethod, paymentMethod]);
+
+  const handleBlur = (name: string, value: string) => {
+    setTouched(prev => ({ ...prev, [name]: true }));
+    if (name === 'rut') {
+      const formattedEntry = formatRut(value);
+      if (!validateRut(formattedEntry)) {
+        setErrors(prev => ({ ...prev, rut: 'RUT inválido. Formato: 12.345.678-9' }));
       }
-    } catch (err) {
-      console.warn("Could not load profile:", err);
     }
   };
 
-  const handleGoogleLogin = async () => {
-    if (!supabase) return;
-    await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: window.location.origin + '/checkout'
-      }
-    });
-  };
-
-  const handleFacebookLogin = async () => {
-    if (!supabase) return;
-    await supabase.auth.signInWithOAuth({
-      provider: 'facebook',
-      options: {
-        redirectTo: window.location.origin + '/checkout'
-      }
-    });
-  };
-
-  // Calculate min date (tomorrow in Chile time)
-  const getMinDate = () => {
-    const today = new Date();
-    // Add 1 day
-    today.setDate(today.getDate() + 1);
-    return today.toISOString().split('T')[0];
-  };
-
-  const validate = () => {
-    const newErrors: Record<string, string> = {};
-    
-    if (!formData.rut) {
-      newErrors.rut = "El RUT es obligatorio";
-    } else if (!validateRut(formData.rut)) {
-      newErrors.rut = "RUT inválido";
-    }
-
-    if (!formData.nombre) newErrors.nombre = "El nombre es obligatorio";
-    
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!formData.email) {
-      newErrors.email = "El email es obligatorio";
-    } else if (!emailRegex.test(formData.email)) {
-      newErrors.email = "Formato de email inválido";
-    }
-
-    if (!formData.telefono) {
-      newErrors.telefono = "El teléfono es obligatorio";
-    } else if (formData.telefono.length < 8) {
-      newErrors.telefono = "Ingresa los 8 dígitos faltantes";
-    }
-
-    if (!formData.direccion) newErrors.direccion = "La dirección es obligatoria";
-    if (!formData.comuna) newErrors.comuna = "Selecciona una comuna";
-    if (!formData.fechaEntrega) newErrors.fechaEntrega = "Selecciona una fecha";
-    
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
+  // Real-time RUT formatting & other inputs
   const handleInputChange = (name: string, value: string) => {
     let val = value;
     if (name === 'rut') {
       val = formatRut(value);
+      setErrors(prev => { const e = {...prev}; delete e.rut; return e; });
     } else if (name === 'telefono') {
-      // Allow only digits and limit to 8 (since +56 9 is static)
       val = val.replace(/\D/g, '').slice(0, 8);
+      if (val.length === 8) {
+        setErrors(prev => { const e = {...prev}; delete e.telefono; return e; });
+      }
+    } else {
+      if (value.trim()) {
+         setErrors(prev => { const e = {...prev}; delete e[name]; return e; });
+      }
+    }
+    setFormData(prev => ({ ...prev, [name]: val }));
+  };
+
+  const validateStep = (step: number) => {
+    let newErrors: Record<string, string> = {};
+    if (step === 1) {
+      if (!formData.rut) newErrors.rut = "Obligatorio";
+      else if (!validateRut(formData.rut)) newErrors.rut = "RUT Inválido";
+      
+      if (!formData.nombre) newErrors.nombre = "Obligatorio";
+      
+      if (!formData.email) newErrors.email = "Obligatorio";
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = "Email inválido";
+      
+      if (!formData.telefono) newErrors.telefono = "Obligatorio";
+      else if (formData.telefono.length < 8) newErrors.telefono = "Faltan dígitos";
     }
     
-    setFormData(prev => ({ ...prev, [name]: val }));
-    if (errors[name]) {
-      const newErrors = { ...errors };
-      delete newErrors[name];
-      setErrors(newErrors);
+    if (step === 3) {
+      if (deliveryMethod === 'domicilio') {
+        if (!formData.direccion) newErrors.direccion = "Obligatorio";
+        if (!formData.comuna) newErrors.comuna = "Obligatorio";
+      }
+      if (!formData.fechaEntrega) newErrors.fechaEntrega = "Debes seleccionar una fecha";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleNext = () => {
+    if (validateStep(activeStep)) {
+      setActiveStep(prev => prev + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (validate()) {
-      setIsSubmitting(true);
-      
-      try {
-        // Save profile data if logged in
-        if (session?.user) {
-          await supabase.from('profiles').upsert({
-            id: session.user.id,
-            rut: formData.rut,
-            full_name: formData.nombre,
-            email: formData.email,
-            phone: formData.telefono,
-            address: formData.direccion,
-            comuna: formData.comuna,
-            updated_at: new Date()
-          });
-        }
+  const handleBack = () => {
+    setActiveStep(prev => prev - 1);
+  };
 
-        // Create order object
+  const handleSubmit = async () => {
+    if (validateStep(1) && validateStep(3)) {
+      setIsSubmitting(true);
+      try {
         const orderId = `FL-${Math.floor(Math.random() * 90000) + 10000}`;
         const newOrder = {
           id: orderId,
@@ -305,448 +328,333 @@ const Checkout = () => {
           shippingCost,
           date: new Date().toISOString(),
           status: "Pagado",
-          channel: "Web",
           items: cart,
           deliveryDate: formData.fechaEntrega,
-          telefono: `+56 9 ${formData.telefono}`,
-          direccion: `${formData.direccion}, ${formData.depto ? formData.depto + ', ' : ''}${formData.comuna}`
         };
-        
-        // Save to local storage for the admin dashboard
         const existingOrders = JSON.parse(localStorage.getItem('flora_orders') || '[]');
         localStorage.setItem('flora_orders', JSON.stringify([newOrder, ...existingOrders]));
-
-        // Deduct stock (Simple simulation with localStorage)
-        const storedProducts = JSON.parse(localStorage.getItem('flora_inventory') || '[]');
-        if (storedProducts.length > 0) {
-          const updatedProducts = storedProducts.map((p: any) => {
-            const itemInCart = cart.find(item => item.slug === p.slug);
-            if (itemInCart) {
-              return { ...p, stock: Math.max(0, p.stock - itemInCart.quantity) };
-            }
-            return p;
-          });
-          localStorage.setItem('flora_inventory', JSON.stringify(updatedProducts));
-        }
-
-        // Simulate Payment Gateway Redirect (e.g. Mercado Pago)
-        // This prevents the "white screen" feeling by showing we are processing
-        await new Promise(resolve => setTimeout(resolve, 2000));
         
+        await new Promise(r => setTimeout(r, 2000));
         setIsSubmitting(false);
         navigate('/success', { state: { orderId } });
       } catch (err) {
-        console.error("Error processing order:", err);
         setIsSubmitting(false);
       }
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#faf8f9]">
-        <motion.div 
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full"
-        />
-      </div>
-    );
-  }
-
-  if (!session && !isGuest) {
-    return (
-      <PageTransition>
-        <div className="min-h-screen bg-[#faf8f9] pt-24 pb-20 px-6 flex items-center justify-center">
-          <div className="max-w-md w-full bg-white p-12 rounded-[3.5rem] border border-gray-100 shadow-xl text-center">
-            <header className="mb-10">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                <User className="w-8 h-8 text-primary" />
-              </div>
-              <h1 className="text-3xl font-serif italic text-gray-900">Bienvenido</h1>
-              <p className="text-sm text-gray-500 mt-2 font-light italic">¿Cómo deseas continuar con tu compra?</p>
-            </header>
-
-            <div className="space-y-4">
-              <button 
-                onClick={handleGoogleLogin}
-                className="w-full flex items-center justify-center gap-3 bg-white border-2 border-gray-100 py-4 rounded-full font-bold text-xs uppercase tracking-widest hover:border-primary/20 transition-all group"
-              >
-                <LogIn className="w-4 h-4 text-gray-400 group-hover:text-primary" />
-                Ingresar con Google
-              </button>
-
-              <button 
-                onClick={handleFacebookLogin}
-                className="w-full flex items-center justify-center gap-3 bg-white border-2 border-gray-100 py-4 rounded-full font-bold text-xs uppercase tracking-widest hover:border-primary/20 transition-all group"
-              >
-                <Facebook className="w-4 h-4 text-gray-400 group-hover:text-[#1877F2]" />
-                Ingresar con Meta
-              </button>
-              
-              <button 
-               onClick={() => setIsGuest(true)}
-                className="w-full bg-primary text-white py-4 rounded-full font-bold text-xs uppercase tracking-widest hover:brightness-110 shadow-lg shadow-primary/20"
-              >
-                Continuar como Invitado
-              </button>
-            </div>
-            
-            <p className="text-[10px] text-gray-400 mt-8 uppercase tracking-widest font-medium leading-relaxed">
-              Al ingresar tus datos se guardarán automáticamente para que tus futuras compras sean más rápidas.
-            </p>
-          </div>
-        </div>
-      </PageTransition>
-    );
-  }
-
   if (cart.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center text-center p-6 bg-[#faf8f9]">
-        <h2 className="text-3xl font-serif italic mb-4">Tu carrito está vacío</h2>
-        <button 
-          onClick={() => navigate('/')}
-          className="bg-primary text-white px-10 py-4 rounded-full font-medium"
-        >
-          Volver a la Tienda
+      <div className="min-h-screen flex flex-col items-center justify-center text-center p-6 bg-white">
+        <h2 className="text-3xl font-serif italic mb-4 text-[#6B0F2B]">Tu carrito está vacío</h2>
+        <button onClick={() => navigate('/')} className="bg-[#6B0F2B] text-white px-10 py-4 rounded-full font-medium">
+          Volver a la tienda
         </button>
       </div>
     );
   }
 
-  const paymentOptions = [
-    { id: "webpay", name: "Webpay Plus", desc: "Débito y Crédito", icon: CreditCard },
-    { id: "mercadopago", name: "Mercado Pago", desc: "Billetera digital", icon: Wallet },
-    { id: "transferencia", name: "Transferencia", desc: "Datos al confirmar", icon: Banknote },
-  ];
-
   return (
     <PageTransition>
-      <div className="min-h-screen bg-[#faf8f9] pt-24 pb-20 px-6">
+      <div className="min-h-screen bg-gray-50 pt-24 pb-20 px-6 font-sans">
+        
+        {/* Loading Overlay */}
         <AnimatePresence>
           {isSubmitting && (
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-primary z-[100] flex flex-col items-center justify-center text-white p-12 overflow-hidden"
-            >
-              {/* Background Floral Elements */}
-              <motion.div 
-                animate={{ 
-                  rotate: 360,
-                  scale: [1, 1.2, 1],
-                  opacity: [0.1, 0.2, 0.1]
-                }}
-                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                className="absolute -top-24 -left-24 w-96 h-96 border-[40px] border-white/10 rounded-full"
-              />
-              <motion.div 
-                animate={{ 
-                  rotate: -360,
-                  scale: [1, 1.1, 1],
-                  opacity: [0.05, 0.15, 0.05]
-                }}
-                transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-                className="absolute -bottom-32 -right-32 w-[500px] h-[500px] border-[60px] border-white/5 rounded-full"
-              />
-
-              <div className="relative">
-                <motion.div
-                  animate={{ 
-                    scale: [1, 1.05, 1],
-                    rotate: [0, 5, 0, -5, 0]
-                  }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                  className="w-32 h-32 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center mb-8 border border-white/20 shadow-2xl"
-                >
-                  <div className="relative">
-                    <motion.div 
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                    >
-                      <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white drop-shadow-lg">
-                        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" strokeLinecap="round" strokeLinejoin="round" />
-                        <circle cx="12" cy="12" r="3" />
-                      </svg>
-                    </motion.div>
-                    {/* Floating Petals Effect */}
-                    {[...Array(6)].map((_, i) => (
-                      <motion.div
-                        key={i}
-                        animate={{ 
-                          y: [-10, 10], 
-                          x: [-5, 5],
-                          opacity: [0, 1, 0],
-                          scale: [0, 1, 0]
-                        }}
-                        transition={{ 
-                          duration: 2 + i, 
-                          repeat: Infinity, 
-                          delay: i * 0.5,
-                          ease: "easeInOut"
-                        }}
-                        className="absolute top-1/2 left-1/2 w-2 h-2 bg-pink-200/40 rounded-full blur-[1px]"
-                        style={{
-                          transform: `rotate(${i * 60}deg) translateX(40px)`
-                        }}
-                      />
-                    ))}
-                  </div>
-                </motion.div>
-              </div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="text-center"
-              >
-                <h2 className="text-3xl font-serif italic mb-4 tracking-wide">Preparando tu regalo floral</h2>
-                <p className="text-[10px] uppercase tracking-[0.5em] font-bold text-white/60 mb-2">Conectando con pasarela de pago seguro</p>
-                <div className="flex gap-1.5 justify-center">
-                  {[0, 1, 2].map((i) => (
-                    <motion.div 
-                      key={i}
-                      animate={{ opacity: [0, 1, 0] }}
-                      transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2 }}
-                      className="w-1.5 h-1.5 bg-white rounded-full"
-                    />
-                  ))}
-                </div>
-              </motion.div>
-
-              <footer className="absolute bottom-12 text-[9px] uppercase tracking-[0.4em] font-bold text-white/30">
-                Flora Boutique • Transacción Encriptada
-              </footer>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-[#6B0F2B] z-[100] flex flex-col items-center justify-center text-white">
+               <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity, ease: "linear" }} className="w-16 h-16 border-4 border-white border-t-white/20 rounded-full mb-6" />
+               <h2 className="text-2xl font-serif italic mb-2">Procesando pago...</h2>
+               <p className="text-[11px] uppercase tracking-[0.08em] opacity-70">Conectando con pasarela segura</p>
             </motion.div>
           )}
         </AnimatePresence>
-        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16">
+
+        <div className="max-w-6xl mx-auto flex gap-12 flex-col lg:flex-row">
           
-          <div className="space-y-12">
-            <header>
-              <button 
-                onClick={() => navigate('/')}
-                className="flex items-center gap-2 text-xs uppercase tracking-widest font-bold text-gray-400 hover:text-primary transition-colors mb-6"
-              >
-                <ChevronLeft className="w-4 h-4" /> Volver a la boutique
+          {/* Main Content Form */}
+          <div className="flex-1 w-full order-2 lg:order-1">
+            <header className="mb-10">
+              <button onClick={() => navigate('/carrito')} className="flex items-center gap-2 text-[11px] uppercase tracking-widest font-bold text-gray-500 hover:text-[#6B0F2B] transition-colors mb-6">
+                <ChevronLeft className="w-4 h-4" /> Volver al Carro
               </button>
               <h1 className="text-4xl font-serif italic text-gray-900">Finalizar Pedido</h1>
-              <p className="text-sm text-gray-500 mt-2 font-light italic">Tu arte floral está a solo unos pasos de llegar a su destino.</p>
             </header>
 
-            <form id="checkout-form" className="space-y-12" onSubmit={handleSubmit}>
-              <section className="space-y-8 p-1 bg-primary/[0.02] rounded-[2.5rem]">
-                <div className="flex items-center gap-4 px-4 pt-4">
-                  <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white text-sm font-serif italic">1</div>
-                  <div>
-                    <h2 className="text-sm uppercase tracking-[0.2em] font-bold text-gray-900">Contacto</h2>
-                    <p className="text-[10px] text-gray-400 uppercase font-medium">Información del remitente</p>
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-white rounded-[2rem] border border-gray-100 shadow-sm">
-                  <InputField label="RUT" name="rut" placeholder="12.345.678-9" fullWidth value={formData.rut} onChange={handleInputChange} error={errors.rut} />
-                  <InputField label="Nombre completo" name="nombre" placeholder="Josefina Pérez" value={formData.nombre} onChange={handleInputChange} error={errors.nombre} />
-                  <InputField label="Email" name="email" placeholder="josefina@ejemplo.com" type="email" value={formData.email} onChange={handleInputChange} error={errors.email} />
-                  <InputField label="WhatsApp ( últimos 8 dígitos)" name="telefono" placeholder="1234 5678" prefix="+56 9" fullWidth value={formData.telefono} onChange={handleInputChange} error={errors.telefono} />
-                </div>
-              </section>
-
-              <section className="space-y-8 p-1 bg-primary/[0.02] rounded-[2.5rem]">
-                <div className="flex items-center gap-4 px-4 pt-4">
-                  <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white text-sm font-serif italic">2</div>
-                  <div>
-                    <h2 className="text-sm uppercase tracking-[0.2em] font-bold text-gray-900">Método de entrega</h2>
-                    <p className="text-[10px] text-gray-400 uppercase font-medium">¿Cómo deseas recibir tu arte?</p>
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-6 bg-white rounded-[2rem] border border-gray-100 shadow-sm">
-                  <button 
-                    type="button"
-                    onClick={() => setDeliveryMethod('domicilio')}
-                    className={`p-6 rounded-2xl border-2 text-left transition-all relative ${deliveryMethod === 'domicilio' ? 'border-primary bg-primary/[0.02]' : 'border-gray-50 bg-gray-50 hover:border-gray-200'}`}
-                  >
-                    <div className="flex justify-between items-center mb-2">
-                      <span className={`text-[10px] uppercase tracking-widest font-bold ${deliveryMethod === 'domicilio' ? 'text-primary' : 'text-gray-400'}`}>Despacho a domicilio</span>
-                      {deliveryMethod === 'domicilio' && <CheckCircle2 className="w-4 h-4 text-primary" />}
+            {/* Stepper Horizontal */}
+            <div className="flex items-center justify-between mb-12 relative">
+              <div className="absolute left-0 top-4 w-full h-[2px] bg-gray-200 -z-10" />
+              <div className="absolute left-0 top-4 h-[2px] bg-[#6B0F2B] -z-10 transition-all duration-500" style={{ width: `${((activeStep - 1) / (STEPS.length - 1)) * 100}%` }} />
+              
+              {STEPS.map((step) => {
+                const isActive = activeStep === step.id;
+                const isCompleted = activeStep > step.id;
+                return (
+                  <div key={step.id} className="flex flex-col items-center gap-3">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-500 ${
+                      isActive ? 'bg-[#6B0F2B] text-white ring-4 ring-[#FBF0F3]' : 
+                      isCompleted ? 'bg-[#6B0F2B] text-white' : 'bg-gray-200 text-gray-500'
+                    }`}>
+                      {isCompleted ? <CheckCircle2 className="w-4 h-4" /> : step.id}
                     </div>
-                    <p className="text-sm font-serif italic text-gray-900">Santiago ($5.000)</p>
-                    <p className="text-[10px] text-gray-400 mt-1">Región Metropolitana</p>
-                  </button>
-                  <button 
-                    type="button"
-                    onClick={() => setDeliveryMethod('retiro')}
-                    className={`p-6 rounded-2xl border-2 text-left transition-all relative ${deliveryMethod === 'retiro' ? 'border-primary bg-primary/[0.02]' : 'border-gray-100 bg-white hover:border-gray-200'}`}
-                  >
-                    <div className="flex justify-between items-center mb-2">
-                       <span className={`text-[10px] uppercase tracking-widest font-bold ${deliveryMethod === 'retiro' ? 'text-primary' : 'text-gray-400'}`}>Retiro en Ñuñoa</span>
-                       {deliveryMethod === 'retiro' && <CheckCircle2 className="w-4 h-4 text-primary" />}
-                    </div>
-                    <p className="text-sm font-serif italic text-gray-900">Gratis / Ñuñoa ($3.500)</p>
-                    <p className="text-[10px] text-gray-400 mt-1">Recargo logístico</p>
-                  </button>
-                </div>
-              </section>
+                    <span className={`text-[10px] uppercase tracking-[0.08em] font-bold hidden sm:block ${isActive ? 'text-[#6B0F2B]' : 'text-gray-400'}`}>
+                      {step.title}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
 
-              <section className="space-y-8 p-1 bg-primary/[0.02] rounded-[2.5rem]">
-                <div className="flex items-center gap-4 px-4 pt-4">
-                  <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white text-sm font-serif italic">3</div>
-                  <div>
-                    <h2 className="text-sm uppercase tracking-[0.2em] font-bold text-gray-900">Entrega</h2>
-                    <p className="text-[10px] text-gray-400 uppercase font-medium">¿Dónde enviamos el arte?</p>
+            {/* Form Steps */}
+            <div className="bg-white p-6 md:p-10 rounded-[2rem] shadow-sm border border-gray-100">
+              
+              {/* STEP 1: CONTACTO */}
+              {activeStep === 1 && (
+                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+                  <h2 className="text-xl font-serif italic text-[#6B0F2B] mb-6">Información de Contacto</h2>
+                  <div className="flex flex-col gap-6">
+                    <InputField label="RUT" name="rut" placeholder="12.345.678-9" value={formData.rut} onChange={handleInputChange} onBlur={handleBlur} error={errors.rut} success={validateRut(formData.rut)} maxLength={12} />
+                    <InputField label="Nombre completo" name="nombre" placeholder="Josefina Pérez" value={formData.nombre} onChange={handleInputChange} error={errors.nombre} />
+                    <InputField label="Email" name="email" type="email" placeholder="correo@ejemplo.com" value={formData.email} onChange={handleInputChange} error={errors.email} />
+                    <InputField label="WhatsApp" name="telefono" placeholder="1234 5678" prefix="+56 9" value={formData.telefono} onChange={handleInputChange} error={errors.telefono} maxLength={8} />
                   </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-white rounded-[2rem] border border-gray-100 shadow-sm">
-                  <InputField label="Dirección (Calle y Número)" name="direccion" placeholder="Av. Las Condes 1234" fullWidth value={formData.direccion} onChange={handleInputChange} error={errors.direccion} />
-                  <InputField label="Depto / Oficina" name="depto" placeholder="Depto 402" value={formData.depto} onChange={handleInputChange} error={errors.depto} />
-                  <SelectField 
-                    label="Comuna" 
-                    name="comuna" 
-                    options={SANTIAGO_COMUNAS} 
-                    value={formData.comuna} 
-                    onChange={handleInputChange} 
-                    error={errors.comuna} 
-                  />
-                  <div className={`space-y-1.5 md:col-span-2`}>
-                    <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400 block px-1">
-                      Fecha de Entrega (A partir de mañana)
-                    </label>
-                    <input 
-                      type="date"
-                      min={getMinDate()}
-                      value={formData.fechaEntrega}
-                      onChange={(e) => handleInputChange('fechaEntrega', e.target.value)}
-                      className={`w-full bg-white border-2 px-6 py-4 text-sm rounded-2xl transition-all outline-none ${
-                        errors.fechaEntrega 
-                          ? 'border-red-200 focus:border-red-300 bg-red-50/10' 
-                          : 'border-transparent focus:border-primary/20'
-                      }`}
-                    />
-                    <AnimatePresence>
-                      {errors.fechaEntrega && (
-                        <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-1.5 text-red-500 mt-2 px-2 text-[10px] font-bold uppercase">
-                          <AlertCircle className="w-3 h-3" /> {errors.fechaEntrega}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
+                </motion.div>
+              )}
 
-                  <div className="md:col-span-2 space-y-1.5">
-                    <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400 block px-1">Mensaje para la tarjeta (Opcional)</label>
-                    <textarea 
-                      value={formData.mensaje}
-                      onChange={(e) => setFormData(prev => ({ ...prev, mensaje: e.target.value }))}
-                      placeholder="Escribe un mensaje lleno de cariño..." 
-                      rows={3} 
-                      className="w-full bg-white border-2 border-transparent focus:border-primary/20 px-6 py-4 text-sm rounded-[1.5rem] transition-all outline-none resize-none" 
-                    />
-                  </div>
-                </div>
-              </section>
-
-              <section className="space-y-8 p-1 bg-primary/[0.02] rounded-[2.5rem]">
-                <div className="flex items-center gap-4 px-4 pt-4">
-                  <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white text-sm font-serif italic">4</div>
-                  <div>
-                    <h2 className="text-sm uppercase tracking-[0.2em] font-bold text-gray-900">Pago</h2>
-                    <p className="text-[10px] text-gray-400 uppercase font-medium">Selecciona tu preferencia</p>
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-6 bg-white rounded-[2rem] border border-gray-100 shadow-sm">
-                  {paymentOptions.map((opt) => (
-                    <button
-                      key={opt.id}
-                      type="button"
-                      onClick={() => setPaymentMethod(opt.id)}
-                      className={`flex items-center gap-4 p-5 rounded-2xl border-2 transition-all text-left ${
-                        paymentMethod === opt.id 
-                          ? 'border-primary bg-primary/[0.02]' 
-                          : 'border-gray-50 hover:border-gray-100'
-                      }`}
+              {/* STEP 2: METODO DE ENTREGA */}
+              {activeStep === 2 && (
+                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+                  <h2 className="text-xl font-serif italic text-[#6B0F2B] mb-6">Método de entrega</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button 
+                      onClick={() => setDeliveryMethod('domicilio')}
+                      className={`relative p-6 rounded-2xl border-2 text-left transition-all ${deliveryMethod === 'domicilio' ? 'border-[#6B0F2B] bg-[#FBF0F3]' : 'border-gray-200 bg-white hover:border-[#6B0F2B]/50'}`}
                     >
-                      <div className={`p-2.5 rounded-xl ${paymentMethod === opt.id ? 'bg-primary text-white' : 'bg-gray-50 text-gray-400'}`}>
-                        <opt.icon className="w-5 h-5" />
+                      <div className="absolute top-6 right-6">
+                        {deliveryMethod === 'domicilio' ? (
+                          <div className="w-6 h-6 rounded-full bg-[#6B0F2B] flex items-center justify-center">
+                            <Check className="w-4 h-4 text-white" />
+                          </div>
+                        ) : (
+                          <div className="w-6 h-6 rounded-full border-2 border-[#6B0F2B]" />
+                        )}
                       </div>
-                      <div>
-                        <p className={`text-xs font-bold uppercase tracking-wider ${paymentMethod === opt.id ? 'text-primary' : 'text-gray-900'}`}>
-                          {opt.name}
-                        </p>
-                        <p className="text-[9px] text-gray-400 font-medium uppercase mt-0.5">{opt.desc}</p>
+                      <div className="flex justify-between items-start mb-4">
+                        <div className="p-3 bg-white rounded-xl shadow-sm"><IconTruckDelivery className="w-6 h-6 text-[#6B0F2B]"/></div>
                       </div>
-                      {paymentMethod === opt.id && (
-                        <div className="ml-auto">
-                          <CheckCircle2 className="w-4 h-4 text-primary" />
+                      <h3 className="text-sm uppercase tracking-[0.08em] font-bold text-gray-900 mb-1">Despacho a domicilio</h3>
+                      <p className="text-sm font-serif italic text-gray-600 mb-2">Región Metropolitana</p>
+                      <p className="text-lg font-serif text-[#6B0F2B]">$5.000</p>
+                    </button>
+
+                    <button 
+                      onClick={() => setDeliveryMethod('retiro')}
+                      className={`relative p-6 rounded-2xl border-2 text-left transition-all ${deliveryMethod === 'retiro' ? 'border-[#6B0F2B] bg-[#FBF0F3]' : 'border-gray-200 bg-white hover:border-[#6B0F2B]/50'}`}
+                    >
+                      <div className="absolute top-6 right-6">
+                        {deliveryMethod === 'retiro' ? (
+                          <div className="w-6 h-6 rounded-full bg-[#6B0F2B] flex items-center justify-center">
+                            <Check className="w-4 h-4 text-white" />
+                          </div>
+                        ) : (
+                          <div className="w-6 h-6 rounded-full border-2 border-[#6B0F2B]" />
+                        )}
+                      </div>
+                      <div className="flex justify-between items-start mb-4">
+                        <div className="p-3 bg-white rounded-xl shadow-sm"><CheckCircle2 className="w-6 h-6 text-[#6B0F2B]"/></div>
+                      </div>
+                      <h3 className="text-sm uppercase tracking-[0.08em] font-bold text-gray-900 mb-1">Retiro en Taller</h3>
+                      <p className="text-sm font-serif italic text-gray-600 mb-2">Comuna de Ñuñoa</p>
+                      <p className="text-lg font-serif text-[#6B0F2B]">Gratis</p>
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* STEP 3: DIRECCION Y FECHAS */}
+              {activeStep === 3 && (
+                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+                  <h2 className="text-xl font-serif italic text-[#6B0F2B] mb-6">
+                    {deliveryMethod === 'domicilio' ? 'Datos de Entrega' : 'Fecha y Mensaje'}
+                  </h2>
+                  <div className="flex flex-col gap-6">
+                    {deliveryMethod === 'domicilio' && (
+                      <div className="flex flex-col gap-6">
+                        <InputField label="Dirección (Calle y Número)" name="direccion" placeholder="Av. Siempre Viva 123" fullWidth value={formData.direccion} onChange={handleInputChange} error={errors.direccion} />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <InputField label="Depto / Oficina" name="depto" placeholder="Depto 402" value={formData.depto} onChange={handleInputChange} error={errors.depto} />
+                          <SelectField label="Comuna" name="comuna" options={SANTIAGO_COMUNAS} value={formData.comuna} onChange={handleInputChange} error={errors.comuna} />
+                        </div>
+                      </div>
+                    )}
+                    
+                    <CustomDatePicker 
+                      selectedDate={formData.fechaEntrega} 
+                      onSelect={(val) => handleInputChange('fechaEntrega', val)} 
+                      error={errors.fechaEntrega} 
+                    />
+
+                    <div className="mt-4">
+                      <label className={labelStyle}>Mensaje para la tarjeta floral</label>
+                      <div className="relative">
+                        <Mail className="absolute left-5 top-5 w-5 h-5 text-gray-400" />
+                        <textarea 
+                          value={formData.mensaje}
+                          onChange={(e) => handleInputChange('mensaje', e.target.value)}
+                          placeholder="Expresa lo que sientes, nosotros pondremos tus palabras en nuestra tarjeta de papelería fina..."
+                          rows={4}
+                          className="w-full bg-white border-2 border-gray-200 focus:border-[#6B0F2B] pl-14 pr-5 py-5 text-sm rounded-2xl transition-all outline-none resize-none font-serif italic"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* STEP 4: PAGO */}
+              {activeStep === 4 && (
+                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+                  <h2 className="text-xl font-serif italic text-[#6B0F2B] mb-6">Método de Pago</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                     {[
+                       { id: 'webpay', name: 'Webpay Plus', desc: 'Débito / Crédito', logo: '💳' },
+                       { id: 'mercadopago', name: 'Mercado Pago', desc: 'Billetera digital', logo: '📱' },
+                       { id: 'transferencia', name: 'Transferencia bancaria', desc: 'Transferencia directa', logo: '🏦' }
+                     ].map(opt => (
+                        <button
+                          key={opt.id}
+                          onClick={() => setPaymentMethod(opt.id as any)}
+                          className={`relative flex flex-col items-center justify-center text-center p-6 rounded-2xl border-2 transition-all ${paymentMethod === opt.id ? 'border-[#6B0F2B] bg-[#FBF0F3]' : 'border-gray-200 bg-white hover:border-[#6B0F2B]/50'}`}
+                        >
+                          <span className="text-3xl mb-3">{opt.logo}</span>
+                          <span className={`text-[11px] uppercase tracking-widest font-bold mb-1 ${paymentMethod === opt.id ? 'text-[#6B0F2B]' : 'text-gray-900'}`}>{opt.name}</span>
+                          <span className="text-[10px] text-gray-500 font-medium">{opt.desc}</span>
+                          {paymentMethod === opt.id && <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-[#6B0F2B] flex items-center justify-center"><Check className="w-3.5 h-3.5 text-white" /></div>}
+                        </button>
+                     ))}
+                  </div>
+                </motion.div>
+              )}
+
+              {/* STEP 5: CONFIRMACION */}
+              {activeStep === 5 && (
+                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+                   <div className="text-center mb-8">
+                     <div className="w-16 h-16 bg-[#FBF0F3] rounded-full flex items-center justify-center mx-auto mb-4">
+                       <CheckCircle2 className="w-8 h-8 text-[#6B0F2B]" />
+                     </div>
+                     <h2 className="text-2xl font-serif italic text-[#6B0F2B]">Casi listo, revisa tu pedido</h2>
+                   </div>
+                   
+                   <div className="bg-gray-50 p-6 rounded-2xl mb-8 space-y-4 text-sm font-sans">
+                      <div className="flex justify-between border-b border-gray-200 pb-4">
+                        <span className="text-gray-500 font-bold uppercase text-[10px] tracking-widest">Remitente</span>
+                        <span className="text-right font-medium">{formData.nombre} <br/> {formData.email}</span>
+                      </div>
+                      <div className="flex justify-between border-b border-gray-200 pb-4">
+                        <span className="text-gray-500 font-bold uppercase text-[10px] tracking-widest">Entrega / Pago</span>
+                        <span className="text-right font-medium">
+                          {deliveryMethod === 'domicilio' ? `${formData.direccion}, ${formData.comuna}` : 'Retiro en Taller (Ñuñoa)'}
+                          <br/> {formatDate(formData.fechaEntrega)}
+                        </span>
+                      </div>
+                      {formData.mensaje && (
+                        <div className="flex justify-between border-b border-gray-200 pb-4">
+                          <span className="text-gray-500 font-bold uppercase text-[10px] tracking-widest">Mensaje floral</span>
+                          <span className="text-right font-serif italic text-[#6B0F2B] font-medium">{formData.mensaje}</span>
                         </div>
                       )}
-                    </button>
-                  ))}
-                </div>
-              </section>
-            </form>
+                      <div className="flex justify-between pb-2">
+                        <span className="text-gray-500 font-bold uppercase text-[10px] tracking-widest">Medio de pago</span>
+                        <span className="font-medium uppercase text-[11px] tracking-widest">{paymentMethod === 'webpay' ? 'Webpay Plus' : paymentMethod === 'mercadopago' ? 'Mercado Pago' : 'Transferencia bancaria'}</span>
+                      </div>
+                   </div>
+                </motion.div>
+              )}
+
+              {/* Navigation Buttons */}
+              <div className="flex gap-4 mt-12 pt-8 border-t border-gray-100">
+                {activeStep > 1 && (
+                  <button onClick={handleBack} className="px-6 py-4 rounded-full border-2 border-gray-200 font-bold text-sm text-gray-500 hover:bg-gray-50 transition-all">
+                    Atrás
+                  </button>
+                )}
+                {activeStep < STEPS.length ? (
+                  <button onClick={handleNext} disabled={activeStep === 4 && !paymentMethod} className="flex-1 bg-[#6B0F2B] text-white py-4 rounded-full font-bold text-sm shadow-lg shadow-[#6B0F2B]/20 hover:bg-[#85163a] transition-all disabled:opacity-50 disabled:cursor-not-allowed text-center">
+                    {activeStep === 4 ? `Continuar a confirmación — ${paymentMethod === 'webpay' ? 'Webpay Plus' : paymentMethod === 'mercadopago' ? 'Mercado Pago' : paymentMethod ? 'Transferencia bancaria' : ''}` : `Continuar a ${STEPS[activeStep].title.toLowerCase()}`}
+                  </button>
+                ) : (
+                  <button onClick={handleSubmit} disabled={isSubmitting} className="flex-1 bg-[#6B0F2B] text-white py-4 rounded-full font-bold text-sm shadow-xl shadow-[#6B0F2B]/30 hover:bg-[#85163a] transition-all disabled:opacity-70 disabled:cursor-not-allowed">
+                    {paymentMethod === 'transferencia' ? 'Transferir y completar' : `Pagar con ${paymentMethod === 'webpay' ? 'Webpay Plus' : 'Mercado Pago'}`}
+                  </button>
+                )}
+              </div>
+            </div>
+            
+            {/* Trust Badges */}
+            <div className="grid grid-cols-2 gap-4 mt-8">
+              <div className="flex items-center justify-center gap-3 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm">
+                <IconShieldCheck className="w-5 h-5 text-green-600" />
+                <span className="text-[10px] uppercase tracking-[0.08em] font-bold text-gray-500">Pago Seguro 100%</span>
+              </div>
+              <div className="flex items-center justify-center gap-3 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm">
+                <IconTruckDelivery className="w-5 h-5 text-[#6B0F2B]" />
+                <span className="text-[10px] uppercase tracking-[0.08em] font-bold text-gray-500">Entrega Premium</span>
+              </div>
+            </div>
           </div>
 
-          <aside className="relative">
-            <div className="lg:sticky lg:top-24 bg-white p-12 rounded-[3.5rem] border border-gray-100 shadow-xl shadow-primary/5">
-              <h2 className="text-2xl font-serif italic mb-10">Resumen</h2>
+          {/* Sidebar Resumen Sticky */}
+          <aside className="w-full lg:w-[400px] order-1 lg:order-2 lg:sticky lg:top-32 h-max self-start z-10">
+            
+            {/* Mobile Accordion Toggle */}
+            <div className="lg:hidden mb-4">
+               <button 
+                 onClick={() => setMobileSummaryOpen(!mobileSummaryOpen)}
+                 className="flex w-full items-center justify-between bg-white p-5 rounded-2xl border border-gray-200 shadow-sm"
+               >
+                 <span className="text-[11px] uppercase tracking-[0.08em] font-bold text-gray-900">Resumen de tu Pedido ({cart.length})</span>
+                 <div className="flex items-center gap-2">
+                   <span className="font-serif font-bold text-[#6B0F2B]">${finalTotal.toLocaleString('es-CL')}</span>
+                   {mobileSummaryOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                 </div>
+               </button>
+            </div>
+
+            <div className={`lg:block bg-white p-8 rounded-[2rem] border border-gray-100 shadow-xl shadow-gray-200/50 ${mobileSummaryOpen ? 'block' : 'hidden'}`}>
+              <h2 className="text-2xl font-serif italic mb-8 text-[#6B0F2B]">Resumen</h2>
               
-              <div className="space-y-6 mb-12 max-h-[350px] overflow-y-auto pr-6 custom-scrollbar">
+              <div className="space-y-6 mb-8 max-h-[350px] overflow-y-auto pr-4 custom-scrollbar">
                 {cart.map((item) => (
-                  <div key={item.id} className="flex justify-between items-center gap-6">
-                    <div className="flex gap-4">
-                      <div className="w-14 h-14 rounded-2xl overflow-hidden bg-gray-50 flex-shrink-0">
-                        <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                      </div>
-                      <div className="flex flex-col justify-center">
-                        <p className="text-xs font-bold text-gray-900 leading-tight">{item.name}</p>
-                        <p className="text-[10px] text-gray-400 mt-1 uppercase tracking-widest font-medium">Cant: {item.quantity}</p>
-                      </div>
+                  <div key={item.id} className="flex gap-4">
+                    <div className="w-20 h-24 rounded-xl overflow-hidden bg-gray-50 shrink-0">
+                      <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                     </div>
-                    <span className="text-sm font-serif italic text-gray-600">${(item.price * item.quantity).toLocaleString('es-CL')}</span>
+                    <div className="flex flex-col flex-1 justify-center">
+                      <p className="text-xs font-bold text-gray-900 uppercase tracking-wider mb-1">{item.name}</p>
+                      <p className="text-[10px] text-gray-500 uppercase tracking-widest font-medium mb-2">Cant: {item.quantity}</p>
+                      <span className="text-sm font-serif italic text-gray-600">${(item.price * item.quantity).toLocaleString('es-CL')}</span>
+                    </div>
                   </div>
                 ))}
               </div>
 
-              <div className="space-y-5 pt-10 border-t border-gray-50">
-                <div className="flex justify-between items-center text-[10px] text-gray-400 uppercase tracking-widest font-bold">
+              <div className="space-y-4 pt-6 border-t border-gray-100">
+                <div className="flex justify-between items-center text-[11px] text-gray-500 uppercase tracking-[0.08em] font-bold">
                   <span>Subtotal</span>
                   <span className="text-gray-900">${total.toLocaleString('es-CL')}</span>
                 </div>
-                <div className="flex justify-between items-center text-[10px] text-gray-500 uppercase tracking-widest font-bold">
-                  <span>Envío ({deliveryMethod === 'domicilio' ? 'Santiago' : 'Gestión Ñuñoa'})</span>
+                <div className="flex justify-between items-center text-[11px] text-gray-500 uppercase tracking-[0.08em] font-bold">
+                  <span>Envío ({deliveryMethod === 'domicilio' ? 'RM' : 'Taller'})</span>
                   <span className="text-gray-900">${shippingCost.toLocaleString('es-CL')}</span>
                 </div>
-                <div className="flex justify-between items-center pt-6 border-t border-gray-50 mt-4">
-                  <span className="text-xs font-bold text-gray-900 uppercase tracking-[0.3em]">Total Final</span>
-                  <span className="text-4xl font-serif italic text-primary">${finalTotal.toLocaleString('es-CL')}</span>
-                </div>
-              </div>
-
-              <button 
-                form="checkout-form"
-                disabled={isSubmitting}
-                className={`w-full bg-primary text-white py-6 rounded-full font-medium shadow-2xl shadow-primary/30 mt-12 transition-all relative overflow-hidden group ${
-                  isSubmitting ? 'opacity-80 cursor-not-allowed' : 'hover:brightness-110 hover:-translate-y-1'
-                }`}
-              >
-                <span className={isSubmitting ? 'opacity-0' : 'opacity-100 group-hover:scale-105 transition-transform inline-block'}>
-                  Completar mi pedido
-                </span>
-              </button>
-
-              <div className="grid grid-cols-2 gap-4 mt-8">
-                <div className="flex items-center gap-3 p-3 bg-gray-50/50 rounded-2xl border border-gray-100">
-                  <ShieldCheck className="w-4 h-4 text-green-500" />
-                  <span className="text-[9px] uppercase tracking-widest font-bold text-gray-400">Seguro 100%</span>
-                </div>
-                <div className="flex items-center gap-3 p-3 bg-gray-50/50 rounded-2xl border border-gray-100">
-                  <Truck className="w-4 h-4 text-primary" />
-                  <span className="text-[9px] uppercase tracking-widest font-bold text-gray-400">Entrega Premium</span>
+                <div className="flex justify-between items-end pt-6 border-t border-gray-100 mt-4">
+                  <span className="text-[11px] font-bold text-gray-900 uppercase tracking-[0.1em]">Total Final</span>
+                  <span className="text-4xl font-serif italic text-[#6B0F2B]">${finalTotal.toLocaleString('es-CL')}</span>
                 </div>
               </div>
             </div>
           </aside>
+
         </div>
       </div>
     </PageTransition>
