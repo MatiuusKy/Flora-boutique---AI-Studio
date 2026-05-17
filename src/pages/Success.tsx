@@ -47,7 +47,7 @@ const Success = () => {
 
   if (!order) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#faf8f9] p-6 text-center">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-warm-white p-6 text-center">
         <h2 className="text-2xl font-serif italic mb-4">No encontramos los detalles de tu orden</h2>
         <button onClick={() => navigate('/')} className="text-primary font-bold uppercase tracking-widest text-xs">Volver a la tienda</button>
       </div>
@@ -56,13 +56,13 @@ const Success = () => {
 
   return (
     <PageTransition>
-      <div className="min-h-screen bg-[#faf8f9] pt-24 pb-20 px-6 flex flex-col items-center">
+      <div className="min-h-screen bg-warm-white pt-24 pb-20 px-6 flex flex-col items-center">
         
         <header className="text-center mb-12">
           <motion.div 
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            className="w-20 h-20 bg-[#6B0F2B] rounded-full flex items-center justify-center text-white mx-auto mb-6 shadow-xl shadow-[#6B0F2B]/20"
+            className="w-20 h-20 bg-burgundy rounded-full flex items-center justify-center text-white mx-auto mb-6 shadow-xl shadow-burgundy/20"
           >
             <CheckCircle2 className="w-10 h-10" />
           </motion.div>
@@ -77,8 +77,8 @@ const Success = () => {
             id="order-receipt"
             className="bg-white rounded-[3rem] shadow-2xl shadow-primary/10 overflow-hidden relative"
           >
-            <div className="absolute top-1/2 -left-4 w-8 h-8 bg-[#faf8f9] rounded-full border-r border-gray-100 z-10 hidden md:block" />
-            <div className="absolute top-1/2 -right-4 w-8 h-8 bg-[#faf8f9] rounded-full border-l border-gray-100 z-10 hidden md:block" />
+            <div className="absolute top-1/2 -left-4 w-8 h-8 bg-warm-white rounded-full border-r border-gray-100 z-10 hidden md:block" />
+            <div className="absolute top-1/2 -right-4 w-8 h-8 bg-warm-white rounded-full border-l border-gray-100 z-10 hidden md:block" />
             
             <div className="p-10 md:p-14 border-b-2 border-dashed border-gray-100 relative">
                <div className="flex justify-between items-start mb-10">
@@ -111,7 +111,7 @@ const Success = () => {
                  </div>
                  <button 
                   onClick={() => generatePDF('order-receipt', `Comprobante-${order.id}.pdf`)}
-                  className="p-4 bg-gray-50 rounded-2xl text-primary hover:bg-primary hover:text-white transition-all group"
+                  className="p-4 bg-linen rounded-2xl text-primary hover:bg-primary hover:text-white transition-all group"
                 >
                    <Download className="w-5 h-5 group-hover:-translate-y-0.5 transition-transform" />
                  </button>
@@ -121,7 +121,7 @@ const Success = () => {
             <div className="p-10 md:p-14 bg-gray-50/30">
                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                  <div className="flex gap-4">
-                   <div className="p-3 bg-white rounded-2xl border border-gray-100 text-[#6B0F2B]">
+                   <div className="p-3 bg-white rounded-2xl border border-gray-100 text-burgundy">
                      <Mail className="w-5 h-5" />
                    </div>
                    <div>
@@ -151,7 +151,7 @@ const Success = () => {
             </button>
             <button 
               onClick={() => window.print()}
-              className="flex-1 bg-[#6B0F2B] text-white px-8 py-5 rounded-full text-sm font-bold shadow-2xl shadow-[#6B0F2B]/20 hover:brightness-110 transition-all flex items-center justify-center gap-3"
+              className="flex-1 bg-burgundy text-white px-8 py-5 rounded-full text-sm font-bold shadow-2xl shadow-burgundy/20 hover:brightness-110 transition-all flex items-center justify-center gap-3"
             >
               Imprimir recibo <Printer className="w-4 h-4" />
             </button>

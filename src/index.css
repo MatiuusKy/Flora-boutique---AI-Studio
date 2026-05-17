@@ -43,6 +43,18 @@
   --color-secondary-grey: #E9E6E4;
   --color-secondary-sage: #899B89;
   --color-secondary-cream: #E1E6D6;
+  
+  --color-burgundy: #580A2D;
+  --color-burgundy-mist: #F5EEF1;
+  --color-ornament: #C9A0B8;
+  --color-blush: #EFCEDA;
+  --color-pebble: #E9E6E4;
+  --color-sage: #899B89;
+  --color-cream: #E1E6D6;
+  --color-linen: #F5F2F0;
+  --color-warm-white: #FAF8F5;
+  --color-wine-black: #1A0A10;
+  --color-admin-dark: #1a1a2e;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);

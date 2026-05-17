@@ -30,8 +30,8 @@ export default function Header({ transparent = false, lightText = false, classNa
 
   const isSolid = !transparent || isScrolled;
   const headerBg = isSolid ? 'bg-white shadow-sm' : 'bg-transparent';
-  const textColor = (!isSolid && lightText) ? 'text-white drop-shadow-sm' : 'text-gray-900';
-  const logoSubColor = (!isSolid && lightText) ? 'text-white opacity-80' : 'text-[#6B0F2B]';
+  const textColor = (!isSolid && lightText) ? 'text-white drop-shadow-sm' : 'text-wine-black';
+  const logoSubColor = (!isSolid && lightText) ? 'text-white opacity-80' : 'text-burgundy';
 
   return (
     <>
@@ -78,7 +78,7 @@ export default function Header({ transparent = false, lightText = false, classNa
             >
               <IconShoppingBag stroke={1.5} className="w-5 h-5" />
               {totalCartItems > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 bg-[#6B0F2B] text-white w-[18px] h-[18px] rounded-full flex items-center justify-center text-[9px] font-bold">
+                <span className="absolute -top-1.5 -right-1.5 bg-burgundy text-white w-[18px] h-[18px] rounded-full flex items-center justify-center text-[9px] font-bold">
                   {totalCartItems}
                 </span>
               )}
@@ -88,7 +88,7 @@ export default function Header({ transparent = false, lightText = false, classNa
               href="https://wa.me/56939276233" 
               target="_blank" 
               rel="noreferrer"
-              className="hidden sm:flex items-center gap-2 bg-[#6B0F2B] text-white px-5 py-2.5 rounded-full text-sm hover:brightness-110 transition-all font-medium"
+              className="hidden sm:flex items-center gap-2 bg-burgundy text-white px-5 py-2.5 rounded-full text-sm hover:brightness-110 transition-all font-medium"
             >
                Pedir ahora
                <IconBrandWhatsapp stroke={1.5} className="w-4 h-4" />
@@ -102,17 +102,17 @@ export default function Header({ transparent = false, lightText = false, classNa
         <div className="fixed inset-0 z-[110] bg-black/20 backdrop-blur-sm lg:hidden" onClick={() => setMobileMenuOpen(false)}>
           <div className="absolute top-0 left-0 w-80 h-full bg-white shadow-2xl p-6 flex flex-col" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-10">
-              <span className="text-lg font-serif italic text-[#6B0F2B]">Menú</span>
+              <span className="text-lg font-serif italic text-burgundy">Menú</span>
               <button onClick={() => setMobileMenuOpen(false)}>
                 <IconX stroke={1.5} className="text-gray-900" />
               </button>
             </div>
             
             <div className="flex flex-col gap-6 text-[13px] uppercase tracking-[0.1em] font-sans font-bold text-gray-900">
-              <Link to="/catalogo" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#6B0F2B]">Catálogo</Link>
-              <Link to="/delivery" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#6B0F2B]">Delivery</Link>
-              <Link to="/nosotros" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#6B0F2B]">Nosotros</Link>
-              <Link to="/contacto" onClick={() => setMobileMenuOpen(false)} className="hover:text-[#6B0F2B]">Contacto</Link>
+              <Link to="/catalogo" onClick={() => setMobileMenuOpen(false)} className="hover:text-burgundy">Catálogo</Link>
+              <Link to="/delivery" onClick={() => setMobileMenuOpen(false)} className="hover:text-burgundy">Delivery</Link>
+              <Link to="/nosotros" onClick={() => setMobileMenuOpen(false)} className="hover:text-burgundy">Nosotros</Link>
+              <Link to="/contacto" onClick={() => setMobileMenuOpen(false)} className="hover:text-burgundy">Contacto</Link>
             </div>
 
             <div className="mt-auto space-y-4">
@@ -125,7 +125,7 @@ export default function Header({ transparent = false, lightText = false, classNa
                 href="https://wa.me/56939276233" 
                 target="_blank" 
                 rel="noreferrer"
-                className="flex items-center justify-center gap-2 bg-[#6B0F2B] text-white px-5 py-4 rounded-full text-sm font-medium w-full"
+                className="flex items-center justify-center gap-2 bg-burgundy text-white px-5 py-4 rounded-full text-sm font-medium w-full"
               >
                  Pedir ahora
                  <IconBrandWhatsapp stroke={1.5} className="w-4 h-4" />

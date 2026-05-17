@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import { validateRut, formatRut } from "../lib/rutUtils";
 import { supabase } from "../lib/supabase";
 import { formatDate } from "../lib/utils";
+import { MercadoPagoLogo } from "../components/ui/MercadoPagoLogo";
 
 const SANTIAGO_COMUNAS = [
   "Cerrillos", "Cerro Navia", "Conchalí", "El Bosque", "Estación Central", 
@@ -58,7 +59,7 @@ const InputField = ({ label, name, placeholder, type = "text", fullWidth = false
             ? 'border-red-200 focus:border-red-400 bg-red-50/10' 
             : success
               ? 'border-[#16a34a] focus:border-[#16a34a] bg-green-50/10'
-              : 'border-gray-200 focus:border-[#6B0F2B] hover:border-gray-300'
+              : 'border-gray-200 focus:border-[gray-900] hover:border-gray-300'
         }`}
       />
       {success && !error && (
@@ -95,7 +96,7 @@ const SelectField = ({ label, name, options, value, onChange, error, fullWidth =
         className={`w-full bg-white border-2 px-5 py-4 text-sm rounded-2xl transition-all outline-none appearance-none cursor-pointer font-sans ${
           error 
             ? 'border-red-200 focus:border-red-400 bg-red-50/10' 
-            : 'border-gray-200 focus:border-[#6B0F2B] hover:border-gray-300'
+            : 'border-gray-200 focus:border-wine-black hover:border-gray-300'
         }`}
       >
         <option value="">Seleccionar comuna...</option>
@@ -157,19 +158,19 @@ const CustomDatePicker = ({ selectedDate, onSelect, error }: { selectedDate: str
                 onClick={() => !disabled && onSelect(dateStr)}
                 className={`flex flex-col items-center justify-center w-[72px] h-[88px] rounded-2xl border-2 transition-all shrink-0 font-sans ${
                   disabled
-                    ? 'opacity-35 cursor-not-allowed border-gray-200 bg-gray-50'
+                    ? 'opacity-35 cursor-not-allowed border-gray-200 bg-linen'
                     : isSelected 
-                      ? 'border-[#6B0F2B] bg-[#FBF0F3] shadow-sm' 
-                      : 'border-gray-200 bg-white hover:border-[#6B0F2B] hover:bg-gray-50'
+                      ? 'border-[#6B0F2B] bg-[gray-50] shadow-sm' 
+                      : 'border-gray-200 bg-white hover:border-[#6B0F2B] hover:bg-linen'
                 }`}
               >
-                <span className={`text-[10px] uppercase font-bold ${isSelected && !disabled ? 'text-[#6B0F2B]' : 'text-gray-400'}`}>
+                <span className={`text-[10px] uppercase font-bold ${isSelected && !disabled ? 'text-wine-black' : 'text-gray-400'}`}>
                   {getDayName(item.date)}
                 </span>
-                <span className={`text-2xl font-serif mt-1 ${isSelected && !disabled ? 'text-[#6B0F2B]' : 'text-gray-900'}`}>
+                <span className={`text-2xl font-serif mt-1 ${isSelected && !disabled ? 'text-burgundy' : 'text-wine-black'}`}>
                   {getDayNum(item.date)}
                 </span>
-                <span className={`text-[10px] uppercase font-bold ${isSelected && !disabled ? 'text-[#6B0F2B]' : 'text-gray-400'}`}>
+                <span className={`text-[10px] uppercase font-bold ${isSelected && !disabled ? 'text-burgundy' : 'text-gray-400'}`}>
                   {getMonthName(item.date)}
                 </span>
               </button>
@@ -197,8 +198,14 @@ const STEPS = [
   { id: 5, title: 'Confirmación' },
 ];
 
+const GIFT_BOXES = [
+  { id: 'box1', name: 'Caja Kraft Clásica', price: 2990, image: 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?q=80&w=200&auto=format&fit=crop' },
+  { id: 'box2', name: 'Caja Premium Negra', price: 5990, image: 'https://images.unsplash.com/photo-1607344645866-009c320b63e0?q=80&w=200&auto=format&fit=crop' },
+  { id: 'box3', name: 'Caja Floral Blanca', price: 4990, image: 'https://images.unsplash.com/photo-1513885535751-8b9238bd345a?q=80&w=200&auto=format&fit=crop' },
+];
+
 const Checkout = () => {
-  const { cart, total } = useContext(CartContext);
+  const { cart, total, setIsOpen } = useContext(CartContext);
   const navigate = useNavigate();
   const [activeStep, setActiveStep] = useState(1);
   const [session, setSession] = useState<any>(null);
@@ -215,7 +222,9 @@ const Checkout = () => {
     depto: "",
     comuna: "",
     fechaEntrega: "",
-    mensaje: ""
+    mensaje: "",
+    esRegalo: false,
+    cajaRegaloId: ""
   });
 
   const [deliveryMethod, setDeliveryMethod] = useState<'domicilio' | 'retiro'>('domicilio');
@@ -225,7 +234,11 @@ const Checkout = () => {
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   const shippingCost = deliveryMethod === 'domicilio' ? 5000 : 0;
-  const finalTotal = total + shippingCost;
+  const boxCost = formData.esRegalo && formData.cajaRegaloId 
+    ? (GIFT_BOXES.find(b => b.id === formData.cajaRegaloId)?.price || 0) 
+    : 0;
+  const discountAmount = paymentMethod === 'transferencia' ? Math.round((total + boxCost) * 0.05) : 0;
+  const finalTotal = total + shippingCost + boxCost - discountAmount;
 
   useEffect(() => {
     const savedData = localStorage.getItem('flora_checkout_data');
@@ -235,6 +248,7 @@ const Checkout = () => {
         if (parsed.formData) setFormData(parsed.formData);
         if (parsed.deliveryMethod) setDeliveryMethod(parsed.deliveryMethod);
         if (parsed.paymentMethod) setPaymentMethod(parsed.paymentMethod);
+        if (parsed.activeStep) setActiveStep(parsed.activeStep);
       } catch (e) {}
     }
   }, []);
@@ -243,9 +257,10 @@ const Checkout = () => {
     localStorage.setItem('flora_checkout_data', JSON.stringify({
       formData,
       deliveryMethod,
-      paymentMethod
+      paymentMethod,
+      activeStep
     }));
-  }, [formData, deliveryMethod, paymentMethod]);
+  }, [formData, deliveryMethod, paymentMethod, activeStep]);
 
   const handleBlur = (name: string, value: string) => {
     setTouched(prev => ({ ...prev, [name]: true }));
@@ -258,7 +273,7 @@ const Checkout = () => {
   };
 
   // Real-time RUT formatting & other inputs
-  const handleInputChange = (name: string, value: string) => {
+  const handleInputChange = (name: string, value: any) => {
     let val = value;
     if (name === 'rut') {
       val = formatRut(value);
@@ -269,7 +284,9 @@ const Checkout = () => {
         setErrors(prev => { const e = {...prev}; delete e.telefono; return e; });
       }
     } else {
-      if (value.trim()) {
+      if (typeof value === 'string' && value.trim()) {
+         setErrors(prev => { const e = {...prev}; delete e[name]; return e; });
+      } else if (typeof value !== 'string') {
          setErrors(prev => { const e = {...prev}; delete e[name]; return e; });
       }
     }
@@ -297,6 +314,7 @@ const Checkout = () => {
         if (!formData.comuna) newErrors.comuna = "Obligatorio";
       }
       if (!formData.fechaEntrega) newErrors.fechaEntrega = "Debes seleccionar una fecha";
+      if (formData.esRegalo && !formData.cajaRegaloId) newErrors.cajaRegaloId = "Debes seleccionar una caja";
     }
 
     setErrors(newErrors);
@@ -326,6 +344,8 @@ const Checkout = () => {
           total: finalTotal,
           deliveryMethod,
           shippingCost,
+          boxCost,
+          giftBox: formData.esRegalo ? GIFT_BOXES.find(b => b.id === formData.cajaRegaloId) : null,
           date: new Date().toISOString(),
           status: "Pagado",
           items: cart,
@@ -333,10 +353,15 @@ const Checkout = () => {
         };
         const existingOrders = JSON.parse(localStorage.getItem('flora_orders') || '[]');
         localStorage.setItem('flora_orders', JSON.stringify([newOrder, ...existingOrders]));
+        localStorage.removeItem('flora_checkout_data');
         
         await new Promise(r => setTimeout(r, 2000));
         setIsSubmitting(false);
-        navigate('/success', { state: { orderId } });
+        if (paymentMethod === 'transferencia') {
+          navigate('/transferencia', { state: { orderId } });
+        } else {
+          navigate('/success', { state: { orderId } });
+        }
       } catch (err) {
         setIsSubmitting(false);
       }
@@ -346,8 +371,8 @@ const Checkout = () => {
   if (cart.length === 0) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center text-center p-6 bg-white">
-        <h2 className="text-3xl font-serif italic mb-4 text-[#6B0F2B]">Tu carrito está vacío</h2>
-        <button onClick={() => navigate('/')} className="bg-[#6B0F2B] text-white px-10 py-4 rounded-full font-medium">
+        <h2 className="text-3xl font-serif italic mb-4 text-burgundy">Tu carrito está vacío</h2>
+        <button onClick={() => navigate('/')} className="bg-wine-black text-white px-10 py-4 rounded-full font-medium">
           Volver a la tienda
         </button>
       </div>
@@ -356,15 +381,19 @@ const Checkout = () => {
 
   return (
     <PageTransition>
-      <div className="min-h-screen bg-gray-50 pt-24 pb-20 px-6 font-sans">
+      <div className="min-h-screen bg-warm-white pt-24 pb-20 px-6 font-sans">
         
         {/* Loading Overlay */}
         <AnimatePresence>
           {isSubmitting && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-[#6B0F2B] z-[100] flex flex-col items-center justify-center text-white">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-burgundy z-[100] flex flex-col items-center justify-center text-white">
                <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity, ease: "linear" }} className="w-16 h-16 border-4 border-white border-t-white/20 rounded-full mb-6" />
-               <h2 className="text-2xl font-serif italic mb-2">Procesando pago...</h2>
-               <p className="text-[11px] uppercase tracking-[0.08em] opacity-70">Conectando con pasarela segura</p>
+               <h2 className="text-2xl font-serif italic mb-2">
+                 {paymentMethod === 'transferencia' ? 'Generando pedido...' : 'Procesando pago...'}
+               </h2>
+               <p className="text-[11px] uppercase tracking-[0.08em] opacity-70">
+                 {paymentMethod === 'transferencia' ? 'Cargando datos de transferencia' : 'Conectando con pasarela segura'}
+               </p>
             </motion.div>
           )}
         </AnimatePresence>
@@ -374,16 +403,16 @@ const Checkout = () => {
           {/* Main Content Form */}
           <div className="flex-1 w-full order-2 lg:order-1">
             <header className="mb-10">
-              <button onClick={() => navigate('/carrito')} className="flex items-center gap-2 text-[11px] uppercase tracking-widest font-bold text-gray-500 hover:text-[#6B0F2B] transition-colors mb-6">
+              <button onClick={() => navigate('/carrito')} className="flex items-center gap-2 text-[11px] uppercase tracking-widest font-bold text-gray-500 hover:text-burgundy transition-colors mb-6">
                 <ChevronLeft className="w-4 h-4" /> Volver al Carro
               </button>
-              <h1 className="text-4xl font-serif italic text-gray-900">Finalizar Pedido</h1>
+              <h1 className="text-4xl font-serif italic text-wine-black">Finalizar Pedido</h1>
             </header>
 
             {/* Stepper Horizontal */}
             <div className="flex items-center justify-between mb-12 relative">
               <div className="absolute left-0 top-4 w-full h-[2px] bg-gray-200 -z-10" />
-              <div className="absolute left-0 top-4 h-[2px] bg-[#6B0F2B] -z-10 transition-all duration-500" style={{ width: `${((activeStep - 1) / (STEPS.length - 1)) * 100}%` }} />
+              <div className="absolute left-0 top-4 h-[2px] bg-burgundy -z-10 transition-all duration-500" style={{ width: `${((activeStep - 1) / (STEPS.length - 1)) * 100}%` }} />
               
               {STEPS.map((step) => {
                 const isActive = activeStep === step.id;
@@ -391,12 +420,12 @@ const Checkout = () => {
                 return (
                   <div key={step.id} className="flex flex-col items-center gap-3">
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-500 ${
-                      isActive ? 'bg-[#6B0F2B] text-white ring-4 ring-[#FBF0F3]' : 
-                      isCompleted ? 'bg-[#6B0F2B] text-white' : 'bg-gray-200 text-gray-500'
+                      isActive ? 'bg-burgundy text-white ring-4 ring-[#FBF0F3]' : 
+                      isCompleted ? 'bg-burgundy text-white' : 'bg-gray-200 text-gray-500'
                     }`}>
                       {isCompleted ? <CheckCircle2 className="w-4 h-4" /> : step.id}
                     </div>
-                    <span className={`text-[10px] uppercase tracking-[0.08em] font-bold hidden sm:block ${isActive ? 'text-[#6B0F2B]' : 'text-gray-400'}`}>
+                    <span className={`text-[10px] uppercase tracking-[0.08em] font-bold hidden sm:block ${isActive ? 'text-burgundy' : 'text-gray-400'}`}>
                       {step.title}
                     </span>
                   </div>
@@ -410,7 +439,7 @@ const Checkout = () => {
               {/* STEP 1: CONTACTO */}
               {activeStep === 1 && (
                 <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                  <h2 className="text-xl font-serif italic text-[#6B0F2B] mb-6">Información de Contacto</h2>
+                  <h2 className="text-xl font-serif italic text-burgundy mb-6">Información de Contacto</h2>
                   <div className="flex flex-col gap-6">
                     <InputField label="RUT" name="rut" placeholder="12.345.678-9" value={formData.rut} onChange={handleInputChange} onBlur={handleBlur} error={errors.rut} success={validateRut(formData.rut)} maxLength={12} />
                     <InputField label="Nombre completo" name="nombre" placeholder="Josefina Pérez" value={formData.nombre} onChange={handleInputChange} error={errors.nombre} />
@@ -423,7 +452,7 @@ const Checkout = () => {
               {/* STEP 2: METODO DE ENTREGA */}
               {activeStep === 2 && (
                 <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                  <h2 className="text-xl font-serif italic text-[#6B0F2B] mb-6">Método de entrega</h2>
+                  <h2 className="text-xl font-serif italic text-burgundy mb-6">Método de entrega</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <button 
                       onClick={() => setDeliveryMethod('domicilio')}
@@ -431,7 +460,7 @@ const Checkout = () => {
                     >
                       <div className="absolute top-6 right-6">
                         {deliveryMethod === 'domicilio' ? (
-                          <div className="w-6 h-6 rounded-full bg-[#6B0F2B] flex items-center justify-center">
+                          <div className="w-6 h-6 rounded-full bg-burgundy flex items-center justify-center">
                             <Check className="w-4 h-4 text-white" />
                           </div>
                         ) : (
@@ -439,11 +468,11 @@ const Checkout = () => {
                         )}
                       </div>
                       <div className="flex justify-between items-start mb-4">
-                        <div className="p-3 bg-white rounded-xl shadow-sm"><IconTruckDelivery className="w-6 h-6 text-[#6B0F2B]"/></div>
+                        <div className="p-3 bg-white rounded-xl shadow-sm"><IconTruckDelivery className="w-6 h-6 text-burgundy"/></div>
                       </div>
-                      <h3 className="text-sm uppercase tracking-[0.08em] font-bold text-gray-900 mb-1">Despacho a domicilio</h3>
+                      <h3 className="text-sm uppercase tracking-[0.08em] font-bold text-wine-black mb-1">Despacho a domicilio</h3>
                       <p className="text-sm font-serif italic text-gray-600 mb-2">Región Metropolitana</p>
-                      <p className="text-lg font-serif text-[#6B0F2B]">$5.000</p>
+                      <p className="text-lg font-serif text-burgundy">$5.000</p>
                     </button>
 
                     <button 
@@ -452,7 +481,7 @@ const Checkout = () => {
                     >
                       <div className="absolute top-6 right-6">
                         {deliveryMethod === 'retiro' ? (
-                          <div className="w-6 h-6 rounded-full bg-[#6B0F2B] flex items-center justify-center">
+                          <div className="w-6 h-6 rounded-full bg-burgundy flex items-center justify-center">
                             <Check className="w-4 h-4 text-white" />
                           </div>
                         ) : (
@@ -460,11 +489,11 @@ const Checkout = () => {
                         )}
                       </div>
                       <div className="flex justify-between items-start mb-4">
-                        <div className="p-3 bg-white rounded-xl shadow-sm"><CheckCircle2 className="w-6 h-6 text-[#6B0F2B]"/></div>
+                        <div className="p-3 bg-white rounded-xl shadow-sm"><CheckCircle2 className="w-6 h-6 text-burgundy"/></div>
                       </div>
-                      <h3 className="text-sm uppercase tracking-[0.08em] font-bold text-gray-900 mb-1">Retiro en Taller</h3>
+                      <h3 className="text-sm uppercase tracking-[0.08em] font-bold text-wine-black mb-1">Retiro en Taller</h3>
                       <p className="text-sm font-serif italic text-gray-600 mb-2">Comuna de Ñuñoa</p>
-                      <p className="text-lg font-serif text-[#6B0F2B]">Gratis</p>
+                      <p className="text-lg font-serif text-burgundy">Gratis</p>
                     </button>
                   </div>
                 </motion.div>
@@ -473,7 +502,7 @@ const Checkout = () => {
               {/* STEP 3: DIRECCION Y FECHAS */}
               {activeStep === 3 && (
                 <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                  <h2 className="text-xl font-serif italic text-[#6B0F2B] mb-6">
+                  <h2 className="text-xl font-serif italic text-burgundy mb-6">
                     {deliveryMethod === 'domicilio' ? 'Datos de Entrega' : 'Fecha y Mensaje'}
                   </h2>
                   <div className="flex flex-col gap-6">
@@ -502,9 +531,53 @@ const Checkout = () => {
                           onChange={(e) => handleInputChange('mensaje', e.target.value)}
                           placeholder="Expresa lo que sientes, nosotros pondremos tus palabras en nuestra tarjeta de papelería fina..."
                           rows={4}
-                          className="w-full bg-white border-2 border-gray-200 focus:border-[#6B0F2B] pl-14 pr-5 py-5 text-sm rounded-2xl transition-all outline-none resize-none font-serif italic"
+                          className="w-full bg-white border-2 border-gray-200 focus:border-wine-black pl-14 pr-5 py-5 text-sm rounded-2xl transition-all outline-none resize-none font-serif italic"
                         />
                       </div>
+                    </div>
+
+                    <div className="mt-8 border-t border-gray-100 pt-8">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div>
+                          <h3 className="text-[17px] font-bold text-gray-900 font-sans tracking-tight">¿Es para regalo?</h3>
+                          <p className="text-sm text-gray-500 font-medium mt-1">Podemos prepararlo en una caja especial de nuestra boutique.</p>
+                        </div>
+                        <button 
+                          onClick={() => handleInputChange('esRegalo', !formData.esRegalo)}
+                          className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${formData.esRegalo ? 'bg-burgundy' : 'bg-gray-200'}`}
+                        >
+                          <span className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${formData.esRegalo ? 'translate-x-5' : 'translate-x-0'}`} />
+                        </button>
+                      </div>
+
+                      <AnimatePresence>
+                         {formData.esRegalo && (
+                           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
+                             {errors.cajaRegaloId && (
+                               <p className="text-red-500 text-xs font-bold mt-4 tracking-tight">{errors.cajaRegaloId}</p>
+                             )}
+                             <div className="pt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                               {GIFT_BOXES.map(box => (
+                                 <div 
+                                   key={box.id}
+                                   onClick={() => handleInputChange('cajaRegaloId', box.id)}
+                                   className={`cursor-pointer group flex flex-col rounded-[1rem] border-2 transition-all p-3 ${
+                                     formData.cajaRegaloId === box.id 
+                                       ? 'border-burgundy bg-[#FBF0F3]/30 shadow-sm' 
+                                       : 'border-gray-100 bg-white hover:border-burgundy/40'
+                                   }`}
+                                 >
+                                   <div className="w-full aspect-square rounded-xl overflow-hidden mb-3">
+                                     <img src={box.image} alt={box.name} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                                   </div>
+                                   <p className="font-bold text-sm text-gray-900 font-sans tracking-tight">{box.name}</p>
+                                   <p className="text-sm text-gray-500 font-medium">+${box.price.toLocaleString('es-CL')}</p>
+                                 </div>
+                               ))}
+                             </div>
+                           </motion.div>
+                         )}
+                      </AnimatePresence>
                     </div>
                   </div>
                 </motion.div>
@@ -513,22 +586,45 @@ const Checkout = () => {
               {/* STEP 4: PAGO */}
               {activeStep === 4 && (
                 <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                  <h2 className="text-xl font-serif italic text-[#6B0F2B] mb-6">Método de Pago</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <h2 className="text-xl font-serif italic text-burgundy mb-6">Método de Pago</h2>
+                  <div className="flex flex-col gap-4">
                      {[
-                       { id: 'webpay', name: 'Webpay Plus', desc: 'Débito / Crédito', logo: '💳' },
-                       { id: 'mercadopago', name: 'Mercado Pago', desc: 'Billetera digital', logo: '📱' },
-                       { id: 'transferencia', name: 'Transferencia bancaria', desc: 'Transferencia directa', logo: '🏦' }
+                       { id: 'webpay', name: 'Webpay Plus', desc: 'Pago con débito o crédito', logo: '💳', price: total + shippingCost },
+                       { id: 'mercadopago', name: 'Mercado Pago', desc: 'Débito, crédito o cuenta', logo: '📱', price: total + shippingCost },
+                       { id: 'transferencia', name: 'Transferencia bancaria', desc: '5% de descuento con este medio', logo: '🏦', price: total + shippingCost - Math.round(total * 0.05) }
                      ].map(opt => (
                         <button
                           key={opt.id}
                           onClick={() => setPaymentMethod(opt.id as any)}
-                          className={`relative flex flex-col items-center justify-center text-center p-6 rounded-2xl border-2 transition-all ${paymentMethod === opt.id ? 'border-[#6B0F2B] bg-[#FBF0F3]' : 'border-gray-200 bg-white hover:border-[#6B0F2B]/50'}`}
+                          className={`relative flex items-center justify-between p-6 rounded-2xl border-2 transition-all text-left ${paymentMethod === opt.id ? 'border-[#6B0F2B] bg-[#FBF0F3]' : 'border-gray-200 bg-white hover:border-[#6B0F2B]/50'}`}
                         >
-                          <span className="text-3xl mb-3">{opt.logo}</span>
-                          <span className={`text-[11px] uppercase tracking-widest font-bold mb-1 ${paymentMethod === opt.id ? 'text-[#6B0F2B]' : 'text-gray-900'}`}>{opt.name}</span>
-                          <span className="text-[10px] text-gray-500 font-medium">{opt.desc}</span>
-                          {paymentMethod === opt.id && <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-[#6B0F2B] flex items-center justify-center"><Check className="w-3.5 h-3.5 text-white" /></div>}
+                          <div className="flex items-center gap-4">
+                            <div className={`w-6 h-6 shrink-0 rounded-full border-2 flex items-center justify-center ${paymentMethod === opt.id ? 'border-burgundy' : 'border-gray-300'}`}>
+                              {paymentMethod === opt.id && <div className="w-3 h-3 rounded-full bg-burgundy" />}
+                            </div>
+                            
+                            <div className="hidden sm:flex w-16 items-center justify-center shrink-0 mr-3">
+                               {opt.id === 'webpay' && (
+                                  <div className="flex flex-col items-start translate-y-0.5">
+                                    <span className="text-[17px] font-bold font-sans text-wine-black leading-none tracking-tighter">webpay<span className="text-burgundy text-[10px]">.</span></span>
+                                  </div>
+                               )}
+                               {opt.id === 'mercadopago' && (
+                                  <MercadoPagoLogo className="h-8 w-auto text-[#00bcff]" aria-label="Logo de Mercado Pago" />
+                               )}
+                               {opt.id === 'transferencia' && (
+                                  <span className="text-3xl opacity-80">{opt.logo}</span>
+                               )}
+                            </div>
+
+                            <div className="flex flex-col">
+                              <span className={`text-[12px] uppercase tracking-widest font-bold mb-1 ${paymentMethod === opt.id ? 'text-burgundy' : 'text-wine-black'}`}>{opt.name}</span>
+                              <span className="text-[10px] sm:text-xs text-gray-500 font-medium">{opt.desc}</span>
+                            </div>
+                          </div>
+                          <div className="font-serif italic text-lg lg:text-xl font-bold text-wine-black shrink-0 ml-4">
+                            ${opt.price.toLocaleString('es-CL')}
+                          </div>
                         </button>
                      ))}
                   </div>
@@ -540,12 +636,12 @@ const Checkout = () => {
                 <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
                    <div className="text-center mb-8">
                      <div className="w-16 h-16 bg-[#FBF0F3] rounded-full flex items-center justify-center mx-auto mb-4">
-                       <CheckCircle2 className="w-8 h-8 text-[#6B0F2B]" />
+                       <CheckCircle2 className="w-8 h-8 text-burgundy" />
                      </div>
-                     <h2 className="text-2xl font-serif italic text-[#6B0F2B]">Casi listo, revisa tu pedido</h2>
+                     <h2 className="text-2xl font-serif italic text-burgundy">Casi listo, revisa tu pedido</h2>
                    </div>
                    
-                   <div className="bg-gray-50 p-6 rounded-2xl mb-8 space-y-4 text-sm font-sans">
+                   <div className="bg-linen p-6 rounded-2xl mb-8 space-y-4 text-sm font-sans">
                       <div className="flex justify-between border-b border-gray-200 pb-4">
                         <span className="text-gray-500 font-bold uppercase text-[10px] tracking-widest">Remitente</span>
                         <span className="text-right font-medium">{formData.nombre} <br/> {formData.email}</span>
@@ -560,7 +656,7 @@ const Checkout = () => {
                       {formData.mensaje && (
                         <div className="flex justify-between border-b border-gray-200 pb-4">
                           <span className="text-gray-500 font-bold uppercase text-[10px] tracking-widest">Mensaje floral</span>
-                          <span className="text-right font-serif italic text-[#6B0F2B] font-medium">{formData.mensaje}</span>
+                          <span className="text-right font-serif italic text-burgundy font-medium">{formData.mensaje}</span>
                         </div>
                       )}
                       <div className="flex justify-between pb-2">
@@ -574,16 +670,16 @@ const Checkout = () => {
               {/* Navigation Buttons */}
               <div className="flex gap-4 mt-12 pt-8 border-t border-gray-100">
                 {activeStep > 1 && (
-                  <button onClick={handleBack} className="px-6 py-4 rounded-full border-2 border-gray-200 font-bold text-sm text-gray-500 hover:bg-gray-50 transition-all">
+                  <button onClick={handleBack} className="px-6 py-4 rounded-full border-2 border-gray-200 font-bold text-sm text-gray-500 hover:bg-linen transition-all">
                     Atrás
                   </button>
                 )}
                 {activeStep < STEPS.length ? (
-                  <button onClick={handleNext} disabled={activeStep === 4 && !paymentMethod} className="flex-1 bg-[#6B0F2B] text-white py-4 rounded-full font-bold text-sm shadow-lg shadow-[#6B0F2B]/20 hover:bg-[#85163a] transition-all disabled:opacity-50 disabled:cursor-not-allowed text-center">
+                  <button onClick={handleNext} disabled={activeStep === 4 && !paymentMethod} className="flex-1 bg-burgundy text-white py-4 rounded-full font-bold text-sm shadow-lg shadow-[#6B0F2B]/20 hover:bg-[#85163a] transition-all disabled:opacity-50 disabled:cursor-not-allowed text-center">
                     {activeStep === 4 ? `Continuar a confirmación — ${paymentMethod === 'webpay' ? 'Webpay Plus' : paymentMethod === 'mercadopago' ? 'Mercado Pago' : paymentMethod ? 'Transferencia bancaria' : ''}` : `Continuar a ${STEPS[activeStep].title.toLowerCase()}`}
                   </button>
                 ) : (
-                  <button onClick={handleSubmit} disabled={isSubmitting} className="flex-1 bg-[#6B0F2B] text-white py-4 rounded-full font-bold text-sm shadow-xl shadow-[#6B0F2B]/30 hover:bg-[#85163a] transition-all disabled:opacity-70 disabled:cursor-not-allowed">
+                  <button onClick={handleSubmit} disabled={isSubmitting} className="flex-1 bg-burgundy text-white py-4 rounded-full font-bold text-sm shadow-xl shadow-[#6B0F2B]/30 hover:bg-[#85163a] transition-all disabled:opacity-70 disabled:cursor-not-allowed">
                     {paymentMethod === 'transferencia' ? 'Transferir y completar' : `Pagar con ${paymentMethod === 'webpay' ? 'Webpay Plus' : 'Mercado Pago'}`}
                   </button>
                 )}
@@ -597,7 +693,7 @@ const Checkout = () => {
                 <span className="text-[10px] uppercase tracking-[0.08em] font-bold text-gray-500">Pago Seguro 100%</span>
               </div>
               <div className="flex items-center justify-center gap-3 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm">
-                <IconTruckDelivery className="w-5 h-5 text-[#6B0F2B]" />
+                <IconTruckDelivery className="w-5 h-5 text-burgundy" />
                 <span className="text-[10px] uppercase tracking-[0.08em] font-bold text-gray-500">Entrega Premium</span>
               </div>
             </div>
@@ -612,44 +708,77 @@ const Checkout = () => {
                  onClick={() => setMobileSummaryOpen(!mobileSummaryOpen)}
                  className="flex w-full items-center justify-between bg-white p-5 rounded-2xl border border-gray-200 shadow-sm"
                >
-                 <span className="text-[11px] uppercase tracking-[0.08em] font-bold text-gray-900">Resumen de tu Pedido ({cart.length})</span>
+                 <span className="text-[11px] uppercase tracking-[0.08em] font-bold text-wine-black">Resumen de tu Pedido ({cart.length})</span>
                  <div className="flex items-center gap-2">
-                   <span className="font-serif font-bold text-[#6B0F2B]">${finalTotal.toLocaleString('es-CL')}</span>
+                   <span className="font-serif font-bold text-burgundy">${finalTotal.toLocaleString('es-CL')}</span>
                    {mobileSummaryOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
                  </div>
                </button>
             </div>
 
             <div className={`lg:block bg-white p-8 rounded-[2rem] border border-gray-100 shadow-xl shadow-gray-200/50 ${mobileSummaryOpen ? 'block' : 'hidden'}`}>
-              <h2 className="text-2xl font-serif italic mb-8 text-[#6B0F2B]">Resumen</h2>
+              <div className="flex items-end justify-between mb-8">
+                <h2 className="text-2xl font-serif italic text-burgundy m-0">Resumen</h2>
+                <button 
+                  onClick={() => setIsOpen(true)}
+                  className="text-xs text-gray-500 hover:text-burgundy underline font-bold tracking-tight uppercase"
+                >
+                  Editar
+                </button>
+              </div>
               
               <div className="space-y-6 mb-8 max-h-[350px] overflow-y-auto pr-4 custom-scrollbar">
                 {cart.map((item) => (
                   <div key={item.id} className="flex gap-4">
-                    <div className="w-20 h-24 rounded-xl overflow-hidden bg-gray-50 shrink-0">
+                    <div className="w-20 h-24 rounded-xl overflow-hidden bg-linen shrink-0">
                       <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                     </div>
                     <div className="flex flex-col flex-1 justify-center">
-                      <p className="text-xs font-bold text-gray-900 uppercase tracking-wider mb-1">{item.name}</p>
+                      <p className="text-xs font-bold text-wine-black uppercase tracking-wider mb-1">{item.name}</p>
                       <p className="text-[10px] text-gray-500 uppercase tracking-widest font-medium mb-2">Cant: {item.quantity}</p>
                       <span className="text-sm font-serif italic text-gray-600">${(item.price * item.quantity).toLocaleString('es-CL')}</span>
                     </div>
                   </div>
                 ))}
+                
+                {formData.esRegalo && formData.cajaRegaloId && GIFT_BOXES.find(b => b.id === formData.cajaRegaloId) && (
+                  <div className="flex gap-4">
+                    <div className="w-20 h-24 rounded-[1rem] overflow-hidden bg-linen shrink-0 border border-burgundy/10">
+                      <img src={GIFT_BOXES.find(b => b.id === formData.cajaRegaloId)?.image} alt="Caja de Regalo" className="w-full h-full object-cover" />
+                    </div>
+                    <div className="flex flex-col flex-1 justify-center">
+                      <p className="text-xs font-bold text-wine-black uppercase tracking-wider mb-1">{GIFT_BOXES.find(b => b.id === formData.cajaRegaloId)?.name}</p>
+                      <p className="text-[10px] text-gray-500 uppercase tracking-widest font-medium mb-2">Cant: 1</p>
+                      <span className="text-sm font-serif italic text-gray-600">${GIFT_BOXES.find(b => b.id === formData.cajaRegaloId)?.price.toLocaleString('es-CL')}</span>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="space-y-4 pt-6 border-t border-gray-100">
                 <div className="flex justify-between items-center text-[11px] text-gray-500 uppercase tracking-[0.08em] font-bold">
                   <span>Subtotal</span>
-                  <span className="text-gray-900">${total.toLocaleString('es-CL')}</span>
+                  <span className="text-wine-black">${total.toLocaleString('es-CL')}</span>
                 </div>
+                {boxCost > 0 && (
+                  <div className="flex justify-between items-center text-[11px] text-gray-500 uppercase tracking-[0.08em] font-bold">
+                    <span>Caja de Regalo</span>
+                    <span className="text-wine-black">${boxCost.toLocaleString('es-CL')}</span>
+                  </div>
+                )}
+                {paymentMethod === 'transferencia' && discountAmount > 0 && (
+                  <div className="flex justify-between items-center text-[11px] text-[#16a34a] uppercase tracking-[0.08em] font-bold">
+                    <span>Descuento (Transferencia 5%)</span>
+                    <span>-${discountAmount.toLocaleString('es-CL')}</span>
+                  </div>
+                )}
                 <div className="flex justify-between items-center text-[11px] text-gray-500 uppercase tracking-[0.08em] font-bold">
                   <span>Envío ({deliveryMethod === 'domicilio' ? 'RM' : 'Taller'})</span>
-                  <span className="text-gray-900">${shippingCost.toLocaleString('es-CL')}</span>
+                  <span className="text-wine-black">${shippingCost.toLocaleString('es-CL')}</span>
                 </div>
                 <div className="flex justify-between items-end pt-6 border-t border-gray-100 mt-4">
-                  <span className="text-[11px] font-bold text-gray-900 uppercase tracking-[0.1em]">Total Final</span>
-                  <span className="text-4xl font-serif italic text-[#6B0F2B]">${finalTotal.toLocaleString('es-CL')}</span>
+                  <span className="text-[11px] font-bold text-wine-black uppercase tracking-[0.1em]">Total Final</span>
+                  <span className="text-4xl font-serif italic text-burgundy">${finalTotal.toLocaleString('es-CL')}</span>
                 </div>
               </div>
             </div>

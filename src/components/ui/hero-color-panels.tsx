@@ -19,7 +19,7 @@ export const HeroColorPanels = ({
   panels: Panel[];
   className?: string;
   title: React.ReactNode;
-  subtitle: string;
+  subtitle: React.ReactNode;
   actions: React.ReactNode;
 }) => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -99,14 +99,14 @@ export const HeroColorPanels = ({
                {title}
              </motion.div>
              
-             <motion.p 
+             <motion.div 
                initial={{ y: 20, opacity: 0 }}
                animate={{ y: 0, opacity: 1 }}
                transition={{ delay: 1, duration: 0.8 }}
                className="text-lg md:text-2xl text-white/95 font-serif italic max-w-2xl mx-auto leading-relaxed drop-shadow-md text-center"
              >
                {subtitle}
-             </motion.p>
+             </motion.div>
 
              <motion.div
                initial={{ y: 20, opacity: 0 }}

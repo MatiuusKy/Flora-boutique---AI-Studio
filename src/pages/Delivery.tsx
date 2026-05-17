@@ -15,30 +15,30 @@ export default function Delivery() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
-    <div className="pt-24 pb-32 bg-[#FDFCFB] min-h-screen">
+    <div className="pt-24 pb-32 bg-warm-white min-h-screen">
       
       {/* New D1 — Hero */}
       <section className="py-20 text-center px-6">
         <div className="max-w-4xl mx-auto space-y-8 flex flex-col items-center">
-          <span className="inline-block bg-[#6B0F2B]/10 text-[#6B0F2B] px-4 py-1.5 rounded-full text-[10px] uppercase font-bold tracking-widest">
+          <span className="inline-block bg-burgundy/10 text-burgundy px-4 py-1.5 rounded-full text-[10px] uppercase font-bold tracking-widest">
             Entrega a domicilio
           </span>
-          <h1 className="text-4xl md:text-6xl font-serif italic text-gray-950 tracking-tighter">
-            Llevamos tus flores hasta tu puerta
+          <h1 className="text-4xl md:text-6xl font-serif italic text-wine-black tracking-tighter">
+            Servicio de Delivery de Flores en Santiago
           </h1>
           <p className="text-lg text-gray-500 max-w-2xl mx-auto">
             Cuidamos cada detalle para que tu arreglo llegue fresco e impecable, entregando sonrisas en todo Santiago.
           </p>
-          <div className="inline-block bg-[#6B0F2B] text-white px-6 py-3 rounded-full text-sm font-medium shadow-md">
+          <div className="inline-block bg-burgundy text-white px-6 py-3 rounded-full text-sm font-medium shadow-md">
             Mismo día si pides antes de las 14:00 hrs
           </div>
         </div>
       </section>
 
       {/* New D2 — ¿Cómo funciona? */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-warm-white">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-3xl font-serif italic text-center mb-16 text-[#6B0F2B]">¿Cómo funciona?</h2>
+          <h2 className="text-3xl font-serif italic text-center mb-16 text-burgundy">¿Cómo funciona?</h2>
           
           <div className="relative flex flex-col md:flex-row justify-between gap-10 md:gap-0">
             {/* Connecting Line (Desktop) */}
@@ -65,13 +65,13 @@ export default function Delivery() {
               }
             ].map((item, i) => (
               <div key={i} className="relative z-10 flex flex-col items-center text-center flex-1">
-                <div className="w-20 h-20 rounded-full bg-[#6B0F2B] flex items-center justify-center mb-6 shadow-xl relative">
-                  <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-white text-[#6B0F2B] font-bold text-sm flex items-center justify-center shadow-sm border border-gray-100">
+                <div className="w-20 h-20 rounded-full bg-burgundy flex items-center justify-center mb-6 shadow-xl relative">
+                  <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-white text-burgundy font-bold text-sm flex items-center justify-center shadow-sm border border-gray-100">
                     {item.step}
                   </div>
                   {item.icon}
                 </div>
-                <h3 className="font-sans font-bold text-lg mb-2 text-gray-900">{item.title}</h3>
+                <h3 className="font-sans font-bold text-lg mb-2 text-wine-black">{item.title}</h3>
                 <p className="text-sm text-gray-500 max-w-[250px]">{item.desc}</p>
               </div>
             ))}
@@ -80,13 +80,13 @@ export default function Delivery() {
       </section>
 
       {/* Fix D1 — Precios por Zona + Comunas */}
-      <section className="py-20 bg-[#F5F4F0]">
+      <section className="py-20 bg-cream/30">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-3xl font-serif italic text-center mb-12 text-[#6B0F2B]">Valores de despacho por zona</h2>
+          <h2 className="text-3xl font-serif italic text-center mb-12 text-burgundy">Valores de despacho por zona</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
             <div className="bg-white p-8 rounded-3xl shadow-sm flex flex-col gap-4">
-              <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center text-[#6B0F2B]">
+              <div className="w-12 h-12 bg-linen rounded-full flex items-center justify-center text-burgundy">
                 <IconMapPin stroke={1.5} className="w-6 h-6" />
               </div>
               <div>
@@ -94,12 +94,12 @@ export default function Delivery() {
                 <p className="text-xs text-gray-500 leading-relaxed h-12">Las Condes, Providencia, Ñuñoa, La Reina, Vitacura</p>
               </div>
               <div className="mt-auto pt-4 border-t border-gray-100">
-                <span className="text-2xl font-serif italic text-[#6B0F2B]">$5.000</span>
+                <span className="text-2xl font-serif italic text-burgundy">$5.000</span>
               </div>
             </div>
 
             <div className="bg-white p-8 rounded-3xl shadow-sm flex flex-col gap-4">
-              <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center text-[#6B0F2B]">
+              <div className="w-12 h-12 bg-linen rounded-full flex items-center justify-center text-burgundy">
                 <IconMapPin stroke={1.5} className="w-6 h-6" />
               </div>
               <div>
@@ -107,11 +107,11 @@ export default function Delivery() {
                 <p className="text-xs text-gray-500 leading-relaxed h-12">La Florida, Macul, San Joaquín, Peñalolén, La Granja</p>
               </div>
               <div className="mt-auto pt-4 border-t border-gray-100">
-                <span className="text-2xl font-serif italic text-[#6B0F2B]">$6.000 - $7.000</span>
+                <span className="text-2xl font-serif italic text-burgundy">$6.000 - $7.000</span>
               </div>
             </div>
 
-            <div className="bg-[#6B0F2B] text-white p-8 rounded-3xl shadow-md flex flex-col gap-4">
+            <div className="bg-burgundy text-white p-8 rounded-3xl shadow-md flex flex-col gap-4">
               <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center text-white">
                 <IconMapPin stroke={1.5} className="w-6 h-6" />
               </div>
@@ -130,9 +130,9 @@ export default function Delivery() {
           {/* New D4 - Mapa Placeholder */}
           <div className="mb-20">
             <div className="w-full h-80 bg-gray-200 rounded-3xl flex items-center justify-center border-2 border-dashed border-gray-300 relative overflow-hidden group">
-               <div className="absolute inset-0 bg-[#6B0F2B]/5 group-hover:bg-[#6B0F2B]/10 transition-colors"></div>
+               <div className="absolute inset-0 bg-burgundy/5 group-hover:bg-burgundy/10 transition-colors"></div>
                <div className="text-center z-10 p-6 bg-white/80 backdrop-blur-md rounded-2xl">
-                 <IconMapPin stroke={1} className="w-12 h-12 text-[#6B0F2B] mx-auto mb-3 opacity-50" />
+                 <IconMapPin stroke={1} className="w-12 h-12 text-burgundy mx-auto mb-3 opacity-50" />
                  <p className="text-gray-500 font-medium">Mapa de cobertura</p>
                  <p className="text-sm text-gray-400 italic mt-1">Zona Oriente y Sur/Centro Santiago</p>
                </div>
@@ -142,33 +142,33 @@ export default function Delivery() {
           {/* Existing "Comunas" List */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 bg-white p-12 rounded-[3rem] shadow-sm">
             <div>
-              <h3 className="text-2xl font-serif italic text-[#6B0F2B] mb-6">Comunas con cobertura</h3>
+              <h3 className="text-2xl font-serif italic text-burgundy mb-6">Comunas con cobertura</h3>
               <ul className="grid grid-cols-2 gap-x-8 gap-y-4 text-gray-600">
-                <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-[#6B0F2B] opacity-50"></div> La Florida</li>
-                <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-[#6B0F2B] opacity-50"></div> La Granja</li>
-                <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-[#6B0F2B] opacity-50"></div> La Reina</li>
-                <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-[#6B0F2B] opacity-50"></div> Las Condes</li>
-                <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-[#6B0F2B] opacity-50"></div> Macul</li>
-                <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-[#6B0F2B] opacity-50"></div> Ñuñoa</li>
-                <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-[#6B0F2B] opacity-50"></div> Peñalolén</li>
-                <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-[#6B0F2B] opacity-50"></div> Providencia</li>
-                <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-[#6B0F2B] opacity-50"></div> San Joaquín</li>
-                <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-[#6B0F2B] opacity-50"></div> Vitacura</li>
+                <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-burgundy opacity-50"></div> La Florida</li>
+                <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-burgundy opacity-50"></div> La Granja</li>
+                <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-burgundy opacity-50"></div> La Reina</li>
+                <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-burgundy opacity-50"></div> Las Condes</li>
+                <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-burgundy opacity-50"></div> Macul</li>
+                <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-burgundy opacity-50"></div> Ñuñoa</li>
+                <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-burgundy opacity-50"></div> Peñalolén</li>
+                <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-burgundy opacity-50"></div> Providencia</li>
+                <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-burgundy opacity-50"></div> San Joaquín</li>
+                <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-burgundy opacity-50"></div> Vitacura</li>
               </ul>
             </div>
             
             <div className="space-y-6">
-              <div className="bg-[#FDFCFB] border border-gray-100 p-6 rounded-2xl flex items-start gap-4">
-                <IconClock className="w-6 h-6 text-[#6B0F2B] shrink-0 mt-1" />
+              <div className="bg-warm-white border border-gray-100 p-6 rounded-2xl flex items-start gap-4">
+                <IconClock className="w-6 h-6 text-burgundy shrink-0 mt-1" />
                 <div>
-                  <h4 className="font-bold text-gray-900">Horarios y precios</h4>
+                  <h4 className="font-bold text-wine-black">Horarios y precios</h4>
                   <p className="text-sm text-gray-500 mt-2">Los envíos se realizan de Lunes a Sábado. Si necesitas un horario especial, podemos coordinarlo a través de WhatsApp.</p>
                 </div>
               </div>
-              <div className="bg-[#FDFCFB] border border-gray-100 p-6 rounded-2xl">
-                <h4 className="font-bold text-gray-900 mb-2">¿Tu comuna no está en la lista?</h4>
+              <div className="bg-warm-white border border-gray-100 p-6 rounded-2xl">
+                <h4 className="font-bold text-wine-black mb-2">¿Tu comuna no está en la lista?</h4>
                 <p className="text-sm text-gray-500 mb-4">Realizamos entregas a otras comunas con un costo adicional sujeto a disponibilidad.</p>
-                <a href="https://wa.me/56939276233" className="inline-block border border-gray-300 text-gray-700 px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest hover:border-[#6B0F2B] hover:text-[#6B0F2B] transition-colors">
+                <a href="https://wa.me/56939276233" className="inline-block border border-gray-300 text-gray-700 px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest hover:border-burgundy hover:text-burgundy transition-colors">
                   Consultar delivery
                 </a>
               </div>
@@ -180,14 +180,14 @@ export default function Delivery() {
       {/* New D3 — FAQ */}
       <section className="py-20 bg-white">
         <div className="max-w-3xl mx-auto px-6">
-          <h2 className="text-3xl font-serif italic text-center mb-12 text-[#6B0F2B]">Preguntas frecuentes</h2>
+          <h2 className="text-3xl font-serif italic text-center mb-12 text-burgundy">Preguntas frecuentes</h2>
           
           <div className="space-y-4">
             {FAQ_ITEMS.map((item, i) => (
-              <div key={i} className="border border-gray-200 rounded-2xl overflow-hidden bg-[#FDFCFB]">
+              <div key={i} className="border border-gray-200 rounded-2xl overflow-hidden bg-warm-white">
                 <button 
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className="w-full text-left px-6 py-5 flex items-center justify-between font-bold text-gray-900 hover:bg-gray-50 transition-colors"
+                  className="w-full text-left px-6 py-5 flex items-center justify-between font-bold text-wine-black hover:bg-linen transition-colors"
                 >
                   <span className="pr-4">{item.q}</span>
                   <IconChevronDown stroke={2} className={`w-5 h-5 text-gray-400 shrink-0 transition-transform duration-300 ${openFaq === i ? "rotate-180" : ""}`} />

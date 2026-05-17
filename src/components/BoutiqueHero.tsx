@@ -3,7 +3,7 @@ import { HeroColorPanels } from "./ui/hero-color-panels";
 import { Button } from "./ui/button";
 import { ArrowRight } from "lucide-react";
 import { motion } from "motion/react";
-import { BorderBeam } from "./ui/border-beam";
+import { Link } from "react-router-dom";
 
 const BoutiqueHero = () => {
   const panels = [
@@ -34,69 +34,55 @@ const BoutiqueHero = () => {
       <HeroColorPanels
         panels={panels}
         title={
-          <div className="flex flex-col items-center relative gap-4">
-            <span className="inline-block bg-white/10 text-white px-4 py-1.5 rounded-full text-[10px] uppercase font-bold tracking-widest backdrop-blur-md mb-4 border border-white/20">
+          <div className="flex flex-col items-center relative gap-6">
+            <span className="inline-block bg-white/5 text-white px-5 py-2.5 rounded-full text-[9px] uppercase font-bold tracking-[0.3em] backdrop-blur-xl mb-6 border border-white/20 shadow-xl">
               Santiago - Zona Oriente
             </span>
             <div className="text-center">
-              <h1 className="text-5xl md:text-8xl font-serif italic text-white tracking-tighter drop-shadow-md">
+              <h1 className="text-6xl md:text-9xl font-serif italic text-white tracking-tighter drop-shadow-2xl font-light">
                 Flores con alma.
               </h1>
             </div>
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-              className="mt-4"
-            >
-              <img 
-                src="/flora-logo-white.png" 
-                alt="" 
-                className="w-16 h-16 md:w-20 md:h-20 object-contain mx-auto filter invert brightness-0 opacity-50"
-                onError={(e) => { e.currentTarget.style.display = 'none'; }}
-              />
-            </motion.div>
           </div>
         }
-        subtitle="Diseño floral boutique para momentos inolvidables."
+        subtitle={
+          <p className="text-sm md:text-lg text-white/80 font-light tracking-wide max-w-lg mx-auto">
+            Diseño floral boutique para celebrar la vida, el amor y los instantes que perduran forever.
+          </p>
+        }
         actions={
-          <div className="flex flex-col items-center gap-10 w-full">
-            <div className="flex gap-8 md:gap-16 pt-4 pb-8 w-full max-w-lg justify-center text-white text-center">
-              <div>
-                <p className="text-2xl md:text-3xl font-serif italic">100%</p>
-                <p className="text-[9px] uppercase tracking-widest font-bold text-white/60 mt-1">Premium</p>
+          <div className="flex flex-col items-center gap-10 w-full mt-8">
+            <div className="flex gap-8 md:gap-20 pt-4 w-full max-w-lg justify-center text-white text-center">
+              <div className="flex flex-col items-center">
+                <span className="text-3xl md:text-4xl font-serif italic font-light">100%</span>
+                <span className="text-[8px] uppercase tracking-[0.3em] font-bold text-white/60 mt-2">Premium</span>
               </div>
-              <div>
-                <p className="text-2xl md:text-3xl font-serif italic">24h</p>
-                <p className="text-[9px] uppercase tracking-widest font-bold text-white/60 mt-1">Mismo día</p>
+              <div className="flex flex-col items-center">
+                <span className="text-3xl md:text-4xl font-serif italic font-light">24h</span>
+                <span className="text-[8px] uppercase tracking-[0.3em] font-bold text-white/60 mt-2">Envío Express</span>
               </div>
-              <div>
-                <p className="text-2xl md:text-3xl font-serif italic">5.0</p>
-                <p className="text-[9px] uppercase tracking-widest font-bold text-white/60 mt-1">Reseñas</p>
+              <div className="flex flex-col items-center">
+                <span className="text-3xl md:text-4xl font-serif italic font-light">Atelier</span>
+                <span className="text-[8px] uppercase tracking-[0.3em] font-bold text-white/60 mt-2">Diseño Autor</span>
               </div>
             </div>
 
-            <div className="flex flex-col md:flex-row gap-6 justify-center w-full max-w-2xl">
-              <Button size="xl" className="relative bg-white/10 text-white border border-white/20 hover:bg-white/20 rounded-full px-12 h-16 md:h-20 text-[10px] md:text-[11px] font-black uppercase tracking-[0.4em] backdrop-blur-xl transition-all hover:scale-105 overflow-hidden flex-1 min-w-[240px]">
-                <span className="relative z-10">Ver Colección</span>
-              </Button>
+            <div className="flex flex-col sm:flex-row gap-6 justify-center w-full max-w-xl mt-8">
+              <Link to="/catalogo" className="w-full sm:w-auto flex-1">
+                <Button size="xl" className="w-full bg-white text-gray-900 hover:bg-gray-100 rounded-full h-16 md:h-16 text-[9px] md:text-[10px] font-bold uppercase tracking-[0.25em] transition-all hover:scale-105 shadow-xl">
+                  Explorar Colección
+                </Button>
+              </Link>
               
-              <Button variant="outline" size="xl" className="relative bg-white/5 text-white border-white/10 hover:bg-white/10 rounded-full px-12 h-16 md:h-20 text-[10px] md:text-[11px] font-black uppercase tracking-[0.4em] backdrop-blur-md transition-all hover:scale-105 overflow-hidden flex-1 min-w-[240px]">
-                <span className="relative z-10 flex items-center justify-center">
-                  Nuestro Atelier
-                  <ArrowRight className="ml-4 w-4 h-4" />
-                </span>
-              </Button>
+              <Link to="/nosotros" className="w-full sm:w-auto flex-1">
+                <Button variant="outline" size="xl" className="w-full bg-white/5 text-white border-white/20 hover:bg-white/10 rounded-full h-16 md:h-16 text-[9px] md:text-[10px] font-bold uppercase tracking-[0.25em] backdrop-blur-md transition-all hover:scale-105">
+                  <span className="flex items-center justify-center">
+                    El Atelier
+                    <ArrowRight className="ml-3 w-4 h-4 opacity-50" />
+                  </span>
+                </Button>
+              </Link>
             </div>
-
-            <motion.span
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.5 }}
-              transition={{ delay: 2, duration: 1 }}
-              className="text-[9px] md:text-[10px] uppercase font-black tracking-[0.5em] text-white/70"
-            >
-              Desliza para descubrir
-            </motion.span>
           </div>
         }
       />

@@ -22,6 +22,8 @@ import Inbox from "./pages/admin/Inbox";
 import ProductManagement from "./pages/admin/ProductManagement";
 import Checkout from "./pages/Checkout";
 import Success from "./pages/Success";
+import TransferReceipt from "./pages/TransferReceipt";
+import DemoEmail from "./pages/DemoEmail";
 import Catalogo from "./pages/Catalogo";
 import Delivery from "./pages/Delivery";
 import Nosotros from "./pages/Nosotros";
@@ -85,6 +87,8 @@ export default function App() {
             <Route path="/admin/productos" element={<ProductManagement />} />
             
             <Route path="/checkout" element={<HeaderWrapper><Checkout /></HeaderWrapper>} />
+            <Route path="/transferencia" element={<HeaderWrapper><TransferReceipt /></HeaderWrapper>} />
+            <Route path="/demo-email" element={<DemoEmail />} />
             <Route path="/success" element={<HeaderWrapper><Success /></HeaderWrapper>} />
             <Route path="/producto/:slug" element={<HeaderWrapper><ProductDetail /></HeaderWrapper>} />
             <Route path="/catalogo" element={<HeaderWrapper><Catalogo /></HeaderWrapper>} />
@@ -102,7 +106,7 @@ export default function App() {
 function LoginPage() {
   return (
     <PageTransition>
-      <div className="min-h-screen flex items-center justify-center bg-[#faf8f9] px-6 py-20 relative overflow-hidden">
+      <div className="min-h-screen flex items-center justify-center bg-warm-white px-6 py-20 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full -mr-48 -mt-48 blur-3xl" />
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/5 rounded-full -ml-48 -mb-48 blur-3xl" />
         
@@ -138,7 +142,7 @@ function Home() {
 
   return (
     <PageTransition>
-      <div className="min-h-screen bg-white font-sans overflow-x-hidden">
+      <div className="min-h-screen bg-warm-white font-sans overflow-x-hidden">
         <Header className="fixed top-0 inset-x-0" transparent={true} lightText={true} />
         
         <BoutiqueHero />
@@ -148,7 +152,7 @@ function Home() {
            <div className="max-w-7xl mx-auto px-6 text-center space-y-24">
               <div className="space-y-6">
                  <h4 className="text-[10px] md:text-xs uppercase tracking-[0.8em] font-black text-primary-custom/60">El Ritual Flora</h4>
-                 <h2 className="text-5xl md:text-8xl font-serif italic text-gray-950 tracking-tighter leading-none">Donde el diseño encuentra <br className="hidden md:block" /> la naturaleza.</h2>
+                 <h2 className="text-5xl md:text-8xl font-serif italic text-wine-black tracking-tighter leading-none">Donde el diseño encuentra <br className="hidden md:block" /> la naturaleza.</h2>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-16 md:gap-24">
@@ -165,7 +169,7 @@ function Home() {
                      className="space-y-6 md:space-y-8"
                    >
                       <div className="text-6xl md:text-7xl font-serif italic text-primary-custom/5 font-black leading-none">0{i+1}</div>
-                      <h3 className="text-2xl md:text-3xl font-serif italic text-gray-950">{step.title}</h3>
+                      <h3 className="text-2xl md:text-3xl font-serif italic text-wine-black">{step.title}</h3>
                       <p className="text-gray-500 font-light italic leading-relaxed text-sm md:text-base px-4">{step.desc}</p>
                    </motion.div>
                  ))}
@@ -174,12 +178,12 @@ function Home() {
         </GridBeam>
 
         {/* Catalog Section */}
-        <section id="catalogo" className="py-32 md:py-48 bg-white">
+        <section id="catalogo" className="py-32 md:py-48 bg-warm-white">
            <div className="max-w-7xl mx-auto px-6 space-y-24">
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-12">
                  <div className="space-y-6">
                     <h4 className="text-[10px] uppercase tracking-[0.6em] font-black text-secondary-sage">Colección Boutique</h4>
-                    <h2 className="text-5xl md:text-8xl font-serif italic text-gray-950 tracking-tighter leading-none">Piezas de Autor</h2>
+                    <h2 className="text-5xl md:text-8xl font-serif italic text-wine-black tracking-tighter leading-none">Piezas de Autor</h2>
                  </div>
                  <div className="flex flex-wrap gap-3">
                     {["Todos", "Rosas", "Mix", "Especiales"].map(cat => (
@@ -188,7 +192,7 @@ function Home() {
                         onClick={() => setSelectedCategory(cat)}
                         className={cn(
                           "px-6 md:px-8 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all",
-                          selectedCategory === cat ? "bg-primary-custom text-white shadow-xl scale-105" : "bg-gray-50 text-gray-400 hover:bg-gray-100"
+                          selectedCategory === cat ? "bg-burgundy text-white shadow-xl scale-105" : "bg-linen text-gray-500 hover:bg-pebble"
                         )}
                       >
                         {cat}
@@ -234,7 +238,7 @@ function Home() {
                          </button>
                       </div>
                       <div className="px-4 space-y-2">
-                         <h3 className="text-2xl font-serif italic text-gray-950 group-hover:text-primary-custom transition-colors">{product.name}</h3>
+                         <h3 className="text-2xl font-serif italic text-wine-black group-hover:text-primary-custom transition-colors">{product.name}</h3>
                          <div className="flex justify-between items-center">
                             <p className="text-xl font-serif tracking-tighter">${product.basePrice.toLocaleString('es-CL')}</p>
                             <span className="text-[10px] uppercase tracking-widest font-black text-primary-custom/0 group-hover:text-primary-custom/100 transition-all">Ver Detalle →</span>
@@ -247,11 +251,11 @@ function Home() {
         </section>
 
         {/* Reviews Section */}
-        <section className="py-20 md:py-32 bg-[#F5F4F0]">
+        <section className="py-20 md:py-32 bg-linen">
           <div className="max-w-7xl mx-auto px-6 space-y-16">
             <div className="text-center space-y-4">
-              <h4 className="text-[10px] uppercase tracking-[0.8em] font-black text-[#6B0F2B]">RESEÑAS REALES</h4>
-              <h2 className="text-4xl md:text-6xl font-serif italic text-gray-950 tracking-tighter">Flores que hablan por sí solas</h2>
+              <h4 className="text-[10px] uppercase tracking-[0.8em] font-black text-burgundy">RESEÑAS REALES</h4>
+              <h2 className="text-4xl md:text-6xl font-serif italic text-wine-black tracking-tighter">Flores que hablan por sí solas</h2>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
@@ -269,7 +273,7 @@ function Home() {
                   transition={{ delay: i * 0.1 }}
                   className="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-sm space-y-6"
                 >
-                  <div className="flex text-[#6B0F2B] gap-1">
+                  <div className="flex text-burgundy gap-1">
                     {[1,2,3,4,5].map(star => <svg key={star} className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>)}
                   </div>
                   <p className="text-lg md:text-xl font-serif italic text-gray-700 leading-relaxed">"{review.text}"</p>
@@ -300,9 +304,9 @@ function Home() {
         </section>
 
         {/* CTA Cuéntanos */}
-        <section className="py-24 bg-white text-center px-6">
+        <section className="py-32 bg-burgundy-mist text-center px-6">
           <div className="max-w-3xl mx-auto space-y-8">
-            <h2 className="text-4xl md:text-6xl font-serif italic text-gray-950 tracking-tighter">¿Buscas algo especial?</h2>
+            <h2 className="text-4xl md:text-6xl font-serif italic text-wine-black tracking-tighter">¿Buscas algo especial?</h2>
             <p className="text-lg text-gray-500 font-light max-w-xl mx-auto">
               Cuéntanos tu idea o envíanos una foto de referencia y lo diseñamos especialmente para ti.
             </p>
@@ -310,7 +314,7 @@ function Home() {
               href="https://wa.me/56939276233" 
               target="_blank" 
               rel="noreferrer"
-              className="inline-flex items-center gap-3 bg-[#6B0F2B] text-white px-8 h-14 rounded-full font-bold uppercase tracking-widest text-[11px] hover:scale-105 transition-transform mt-4"
+              className="inline-flex items-center gap-3 bg-burgundy text-white px-8 h-14 rounded-full font-bold uppercase tracking-widest text-[11px] hover:scale-105 transition-transform mt-4"
             >
               <IconBrandWhatsapp className="w-5 h-5" />
               COTIZAR POR WHATSAPP
@@ -330,15 +334,15 @@ import { IconBrandInstagram, IconBrandWhatsapp, IconBuilding, IconMapPin, IconCl
 function Contacto() {
   return (
     <PageTransition>
-      <div className="pt-32 pb-24 bg-[#F5F4F0] min-h-screen">
+      <div className="pt-32 pb-24 bg-linen min-h-screen">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center space-y-4 mb-20">
-            <h4 className="text-[10px] uppercase tracking-[0.8em] font-black text-[#6B0F2B]">ESTAMOS AQUI PARA TI</h4>
-            <h1 className="text-5xl md:text-7xl font-serif italic text-gray-950 tracking-tighter">Hablemos</h1>
+            <h4 className="text-[10px] uppercase tracking-[0.8em] font-black text-burgundy">ESTAMOS AQUI PARA TI</h4>
+            <h1 className="text-5xl md:text-7xl font-serif italic text-wine-black tracking-tighter">Hablemos</h1>
             <p className="text-gray-500 font-light italic text-lg">Respondemos en minutos. Escríbenos por WhatsApp o déjanos tu mensaje.</p>
           </div>
 
-          <div className="bg-[#6B0F2B] text-white rounded-[2.5rem] p-10 md:p-16 mb-20 flex flex-col md:flex-row items-center justify-between gap-10 shadow-xl overflow-hidden relative">
+          <div className="bg-burgundy text-white rounded-[2.5rem] p-10 md:p-16 mb-20 flex flex-col md:flex-row items-center justify-between gap-10 shadow-xl overflow-hidden relative">
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -mr-32 -mt-32"></div>
             <div className="relative z-10 flex items-center gap-8">
               <div className="w-20 h-20 bg-white/10 rounded-full flex items-center justify-center shrink-0">
@@ -352,27 +356,27 @@ function Contacto() {
                 <p className="text-sm font-light text-white/70">Lunes a viernes 9:00–20:00 · Sábados 9:00–18:00</p>
               </div>
             </div>
-            <a href="https://wa.me/56939276233" target="_blank" rel="noreferrer" className="bg-white text-[#6B0F2B] px-10 py-5 rounded-full font-bold uppercase tracking-widest text-xs hover:scale-105 transition-transform whitespace-nowrap z-10 relative">
+            <a href="https://wa.me/56939276233" target="_blank" rel="noreferrer" className="bg-white text-burgundy px-10 py-5 rounded-full font-bold uppercase tracking-widest text-xs hover:scale-105 transition-transform whitespace-nowrap z-10 relative">
                Escribir ahora
             </a>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
             <div className="bg-white p-10 md:p-14 rounded-[3rem] shadow-sm">
-              <h3 className="text-3xl font-serif italic text-[#6B0F2B] mb-8">Déjanos un mensaje</h3>
-              <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+              <h3 className="text-3xl font-serif italic text-burgundy mb-8">Déjanos un mensaje</h3>
+              <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
                 <div>
-                  <input type="text" placeholder="Nombre completo" className="w-full bg-[#F5F4F0] border-none rounded-xl px-6 py-4 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-[#6B0F2B]/20 outline-none transition-all" required />
+                  <input type="text" placeholder="Nombre completo" className="w-full bg-transparent border-b border-gray-200 px-2 py-3 text-wine-black placeholder:text-gray-400 focus:border-burgundy outline-none transition-colors font-light" required />
                 </div>
                 <div>
-                  <input type="email" placeholder="Email" className="w-full bg-[#F5F4F0] border-none rounded-xl px-6 py-4 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-[#6B0F2B]/20 outline-none transition-all" required />
+                  <input type="email" placeholder="Email" className="w-full bg-transparent border-b border-gray-200 px-2 py-3 text-wine-black placeholder:text-gray-400 focus:border-burgundy outline-none transition-colors font-light" required />
                 </div>
-                <div className="flex gap-4">
-                  <div className="w-24 bg-[#F5F4F0] rounded-xl px-4 py-4 text-gray-500 flex items-center justify-center font-medium">+56</div>
-                  <input type="tel" placeholder="Teléfono" className="w-full bg-[#F5F4F0] border-none rounded-xl px-6 py-4 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-[#6B0F2B]/20 outline-none transition-all" />
+                <div className="flex gap-4 items-end">
+                  <div className="w-16 border-b border-gray-200 px-2 py-3 text-gray-400 font-light text-center">+56</div>
+                  <input type="tel" placeholder="Teléfono" className="flex-1 bg-transparent border-b border-gray-200 px-2 py-3 text-wine-black placeholder:text-gray-400 focus:border-burgundy outline-none transition-colors font-light" />
                 </div>
                 <div>
-                  <select defaultValue="" className="w-full bg-[#F5F4F0] border-none rounded-xl px-6 py-4 text-gray-900 focus:ring-2 focus:ring-[#6B0F2B]/20 outline-none transition-all appearance-none cursor-pointer">
+                  <select defaultValue="" className="w-full bg-transparent border-b border-gray-200 px-2 py-3 text-wine-black focus:border-burgundy outline-none transition-colors appearance-none cursor-pointer font-light">
                     <option value="" disabled>Selecciona un motivo...</option>
                     <option value="cumpleanos">Cumpleaños</option>
                     <option value="aniversario">Aniversario</option>
@@ -383,9 +387,9 @@ function Contacto() {
                   </select>
                 </div>
                 <div>
-                  <textarea placeholder="Cuéntanos qué necesitas..." rows={4} className="w-full bg-[#F5F4F0] border-none rounded-xl px-6 py-4 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-[#6B0F2B]/20 outline-none transition-all resize-none" required></textarea>
+                  <textarea placeholder="Cuéntanos qué necesitas..." rows={4} className="w-full bg-transparent border-b border-gray-200 px-2 py-3 text-wine-black placeholder:text-gray-400 focus:border-burgundy outline-none transition-colors resize-none font-light" required></textarea>
                 </div>
-                <button type="submit" className="w-full bg-[#6B0F2B] text-white py-5 rounded-full font-bold uppercase tracking-widest text-[11px] hover:brightness-110 transition-all flex items-center justify-center gap-3">
+                <button type="submit" className="w-full bg-burgundy text-white py-5 rounded-full font-bold uppercase tracking-widest text-[11px] hover:brightness-110 transition-all flex items-center justify-center gap-3">
                   Enviar mensaje <IconSend stroke={1.5} className="w-4 h-4" />
                 </button>
                 <p className="text-center text-xs text-gray-400 italic">También puedes escribirnos a contacto.florabtq@gmail.com</p>
@@ -394,22 +398,22 @@ function Contacto() {
 
             <div className="space-y-8">
               <div className="bg-white p-10 rounded-[2.5rem] shadow-sm flex items-start gap-6">
-                <div className="w-14 h-14 bg-[#6B0F2B]/5 text-[#6B0F2B] rounded-2xl flex items-center justify-center shrink-0">
+                <div className="w-14 h-14 bg-burgundy/5 text-burgundy rounded-2xl flex items-center justify-center shrink-0">
                   <IconMapPin stroke={1.5} className="w-6 h-6" />
                 </div>
                 <div>
-                  <h4 className="text-lg font-serif italic text-gray-950 mb-2">Visítanos</h4>
+                  <h4 className="text-lg font-serif italic text-wine-black mb-2">Visítanos</h4>
                   <p className="text-gray-600 font-medium mb-1">Los Leones 2341, Local 8, Providencia, Santiago.</p>
                   <p className="text-sm text-gray-500 font-light italic">Retiro en taller disponible — coordinar por WhatsApp</p>
                 </div>
               </div>
 
               <div className="bg-white p-10 rounded-[2.5rem] shadow-sm flex items-start gap-6">
-                <div className="w-14 h-14 bg-[#6B0F2B]/5 text-[#6B0F2B] rounded-2xl flex items-center justify-center shrink-0">
+                <div className="w-14 h-14 bg-burgundy/5 text-burgundy rounded-2xl flex items-center justify-center shrink-0">
                   <IconClock stroke={1.5} className="w-6 h-6" />
                 </div>
                 <div>
-                  <h4 className="text-lg font-serif italic text-gray-950 mb-2">Horarios</h4>
+                  <h4 className="text-lg font-serif italic text-wine-black mb-2">Horarios</h4>
                   <p className="text-gray-600 text-sm mb-1">Lunes-Viernes: 09:30–19:30</p>
                   <p className="text-gray-600 text-sm mb-1">Sábados: 10:00–14:00</p>
                   <p className="text-gray-600 text-sm italic opacity-70">Domingos: Cerrado</p>
@@ -417,19 +421,19 @@ function Contacto() {
               </div>
 
               <div className="bg-white p-10 rounded-[2.5rem] shadow-sm flex items-start gap-6">
-                <div className="w-14 h-14 bg-[#6B0F2B]/5 text-[#6B0F2B] rounded-2xl flex items-center justify-center shrink-0">
+                <div className="w-14 h-14 bg-burgundy/5 text-burgundy rounded-2xl flex items-center justify-center shrink-0">
                   <IconBrandInstagram stroke={1.5} className="w-6 h-6" />
                 </div>
                 <div>
-                  <h4 className="text-lg font-serif italic text-gray-950 mb-2">Redes</h4>
-                  <a href="https://instagram.com/floraboutique.cl" target="_blank" rel="noreferrer" className="text-[#6B0F2B] hover:underline font-medium block mb-1">@floraboutique.cl</a>
+                  <h4 className="text-lg font-serif italic text-wine-black mb-2">Redes</h4>
+                  <a href="https://instagram.com/floraboutique.cl" target="_blank" rel="noreferrer" className="text-burgundy hover:underline font-medium block mb-1">@floraboutique.cl</a>
                   <a href="https://wa.me/56939276233" target="_blank" rel="noreferrer" className="text-gray-500 hover:text-gray-900 transition-colors text-sm italic">WhatsApp: enlace directo</a>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="mt-20 bg-[#6B0F2B] text-white p-14 md:p-20 rounded-[3rem] text-center max-w-4xl mx-auto space-y-8">
+          <div className="mt-20 bg-burgundy text-white p-14 md:p-20 rounded-[3rem] text-center max-w-4xl mx-auto space-y-8">
              <div className="w-20 h-20 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-6">
                <IconBuilding stroke={1.5} className="w-10 h-10" />
              </div>
@@ -437,7 +441,7 @@ function Contacto() {
              <p className="text-lg text-white/80 font-light max-w-2xl mx-auto leading-relaxed">
                Flores para oficinas, eventos corporativos, regalos para clientes y suscripciones mensuales. Cotiza con nosotros.
              </p>
-             <button className="border-2 border-white text-white px-10 py-5 rounded-full font-bold uppercase tracking-widest text-[11px] hover:bg-white hover:text-[#6B0F2B] transition-colors mt-4">
+             <button className="border-2 border-white text-white px-10 py-5 rounded-full font-bold uppercase tracking-widest text-[11px] hover:bg-white hover:text-burgundy transition-colors mt-4">
                Consultar para empresa
              </button>
           </div>

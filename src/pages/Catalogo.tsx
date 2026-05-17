@@ -77,36 +77,39 @@ export default function Catalogo() {
   };
 
   return (
-    <div className="pt-24 pb-24 bg-[#F5F4F0] min-h-screen">
+    <div className="pt-24 pb-24 bg-warm-white min-h-screen">
       {/* New C2 — Banner contextual */}
-      <div className="w-full bg-[#6B0F2B] text-white py-3 px-4 text-center text-xs md:text-sm font-medium tracking-wide">
-        🚨 Día de la madre — Despacho mismo día · Pide antes de las 14:00 hrs · <Link to="#" className="underline hover:opacity-80">Ver colección →</Link>
+      <div className="w-full bg-[#1A1A1A] text-white py-2.5 px-4 text-center text-[10px] md:text-[11px] font-sans font-bold tracking-[0.2em] uppercase">
+        Despacho mismo día en Providencia y Las Condes · Pide antes de las 14:00 hrs
       </div>
 
-      <div className="max-w-[1400px] mx-auto px-6 mt-10">
-        <h1 className="text-4xl md:text-5xl font-serif italic text-gray-950 tracking-tighter mb-8 text-center text-[#6B0F2B]">Catálogo</h1>
-        
+      <div className="max-w-[1400px] mx-auto px-6 mt-16 md:mt-20">
+        <header className="mb-16">
+          <h1 className="text-5xl md:text-7xl font-serif italic text-wine-black tracking-tighter mb-4 text-center">Catálogo de Flores y Arreglos Florales</h1>
+          <p className="text-center text-gray-500 font-light max-w-lg mx-auto text-sm md:text-base">Descubre nuestra exclusiva colección botánica. Elaboramos arreglos florales artesanales en Santiago, ideales para regalos, aniversarios, y matrimonios con despacho a todo el sector oriente y centro.</p>
+        </header>
+
         {/* Search */}
-        <div className="max-w-xl mx-auto relative mb-12">
+        <div className="max-w-md mx-auto relative mb-12">
           <input 
             type="text" 
             placeholder="Buscar ramos, flores, regalos..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-12 pr-6 py-4 rounded-full border-none bg-white shadow-sm focus:ring-2 focus:ring-[#6B0F2B]/20 outline-none w-full"
+            className="w-full pl-10 pr-6 py-3 border-b border-gray-200 bg-transparent focus:border-wine-black outline-none transition-colors text-sm font-light italic"
           />
-          <IconSearch stroke={1.5} className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+          <IconSearch stroke={1} className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
         </div>
 
         {/* Filters */}
-        <div className="flex flex-col gap-8 mb-10">
-          <div className="flex flex-wrap items-center justify-center gap-3">
+        <div className="flex flex-col gap-10 mb-16 max-w-4xl mx-auto">
+          <div className="flex flex-wrap items-center justify-center gap-2 md:gap-4">
             {CATEGORIES.map(cat => (
               <button 
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-5 py-2 rounded-full text-[11px] font-sans font-bold uppercase tracking-widest transition-all ${
-                  selectedCategory === cat ? 'bg-[#6B0F2B] text-white shadow-md' : 'bg-white text-gray-500 hover:bg-gray-50'
+                className={`px-6 py-2.5 rounded-full text-[10px] font-sans font-bold uppercase tracking-[0.15em] transition-all duration-300 ${
+                  selectedCategory === cat ? 'bg-wine-black text-white shadow-lg' : 'bg-transparent text-gray-400 hover:text-wine-black border border-gray-200 hover:border-wine-black'
                 }`}
               >
                 {cat}
@@ -114,52 +117,56 @@ export default function Catalogo() {
             ))}
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-4 text-[11px] font-sans font-bold uppercase tracking-widest text-gray-600">
-            <span>Precio:</span>
-            {["Todos", "Menos de $20.000", "$20.000-$35.000", "Más de $35.000"].map(price => (
-              <button 
-                key={price}
-                onClick={() => setSelectedPrice(price)}
-                className={`transition-colors ${selectedPrice === price ? 'text-[#6B0F2B] border-b border-[#6B0F2B]' : 'hover:text-[#6B0F2B]'}`}
-              >
-                {price}
-              </button>
-            ))}
-          </div>
-
-          <div className="flex flex-wrap items-center justify-center gap-4">
-            <span className="text-[11px] font-sans font-bold uppercase tracking-widest text-gray-600">Color:</span>
-            <div className="flex items-center gap-3">
-              {COLORS.map(color => (
-                <div key={color.name} className="relative group">
-                  <button
-                    onClick={() => setSelectedColor(selectedColor === color.name ? null : color.name)}
-                    className={`w-6 h-6 rounded-full shadow-sm relative transition-all ${color.border || ''} ${selectedColor === color.name ? 'ring-2 ring-offset-2 ring-[#6B0F2B] scale-110' : 'hover:scale-110'}`}
-                    style={{ backgroundColor: color.hex }}
-                  />
-                  {/* Tooltip Fix C3 */}
-                  <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-10">
-                    {color.name}
-                  </div>
-                </div>
+          <div className="flex flex-col md:flex-row items-center justify-center gap-10">
+            <div className="flex flex-wrap items-center justify-center gap-6">
+              <span className="text-[9px] font-sans font-bold uppercase tracking-[0.2em] text-gray-400">Rango</span>
+              {["Todos", "Menos de $20.000", "$20.000-$35.000", "Más de $35.000"].map(price => (
+                <button 
+                  key={price}
+                  onClick={() => setSelectedPrice(price)}
+                  className={`text-[11px] font-medium tracking-wide transition-colors ${selectedPrice === price ? 'text-wine-black border-b border-wine-black' : 'text-gray-400 hover:text-wine-black'}`}
+                >
+                  {price}
+                </button>
               ))}
+            </div>
+
+            <div className="hidden md:block w-px h-6 bg-gray-200"></div>
+
+            <div className="flex flex-wrap items-center justify-center gap-5">
+              <span className="text-[9px] font-sans font-bold uppercase tracking-[0.2em] text-gray-400">Tono</span>
+              <div className="flex items-center gap-3">
+                {COLORS.map(color => (
+                  <div key={color.name} className="relative group">
+                    <button
+                      onClick={() => setSelectedColor(selectedColor === color.name ? null : color.name)}
+                      className={`w-5 h-5 rounded-full shadow-inner relative transition-all ${color.border || ''} ${selectedColor === color.name ? 'ring-1 ring-offset-2 ring-wine-black scale-110' : 'hover:scale-110'}`}
+                      style={{ backgroundColor: color.hex }}
+                    />
+                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-wine-black text-white text-[9px] uppercase tracking-widest px-2 py-1 rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-10 flex items-center justify-center">
+                      <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-wine-black rotate-45"></span>
+                      <span className="relative z-10">{color.name}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
 
         {/* Results Header */}
-        <div className="flex flex-col sm:flex-row items-center justify-between mt-12 mb-8 border-b border-gray-200 pb-4">
-          <p className="text-gray-500 text-[13px] mb-4 sm:mb-0">
-            Mostrando {filteredProducts.length} de {products.length} arreglos
+        <div className="flex flex-col sm:flex-row items-center justify-between mt-8 mb-10 pb-4">
+          <p className="text-gray-400 text-xs font-light italic tracking-wide mb-4 sm:mb-0">
+            {filteredProducts.length} creaciones disponibles
           </p>
           
           <div className="relative">
             <button 
               onClick={() => setIsSortOpen(!isSortOpen)}
-              className="flex items-center gap-2 text-[11px] font-sans font-bold uppercase tracking-widest text-gray-900 bg-white px-4 py-2 rounded-full shadow-sm hover:shadow-md transition-all"
+              className="flex items-center gap-2 text-[10px] font-sans font-bold uppercase tracking-[0.15em] text-wine-black transition-opacity hover:opacity-70"
             >
-              Ordenar por: {sortBy}
-              <IconChevronDown stroke={2} className={`w-4 h-4 transition-transform ${isSortOpen ? 'rotate-180' : ''}`} />
+              Filtro: {sortBy}
+              <IconChevronDown stroke={1} className={`w-4 h-4 transition-transform duration-300 ${isSortOpen ? 'rotate-180' : ''}`} />
             </button>
             
             <AnimatePresence>
@@ -168,15 +175,15 @@ export default function Catalogo() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 10 }}
-                  className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl overflow-hidden z-20 py-2 border border-gray-100"
+                  className="absolute right-0 top-full mt-4 w-56 bg-white shadow-2xl z-20 py-2 border border-gray-100"
                 >
                   {["Más vendidos", "Precio: menor a mayor", "Precio: mayor a menor", "Más nuevos"].map(option => (
                     <button
                       key={option}
                       onClick={() => { setSortBy(option); setIsSortOpen(false); }}
-                      className={`block w-full text-left px-4 py-3 text-[11px] font-sans font-bold uppercase tracking-widest transition-colors ${sortBy === option ? 'text-[#6B0F2B] bg-gray-50' : 'text-gray-600 hover:bg-gray-50 hover:text-[#6B0F2B]'}`}
+                      className={`block w-full text-left px-5 py-3 text-[10px] font-sans font-bold uppercase tracking-[0.1em] transition-colors ${sortBy === option ? 'text-wine-black bg-linen/50' : 'text-gray-400 hover:bg-linen hover:text-wine-black'}`}
                     >
-                      {option} {sortBy === option && '✓'}
+                      {option} {sortBy === option && '·'}
                     </button>
                   ))}
                 </motion.div>
@@ -187,65 +194,56 @@ export default function Catalogo() {
 
         {/* Grid or Empty State */}
         {filteredProducts.length > 0 ? (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-x-8 md:gap-y-12">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8 md:gap-x-12 md:gap-y-16">
             {filteredProducts.map((product, index) => (
               <Link 
                 to={`/producto/${product.slug}`} 
                 key={product.id}
-                className="group flex flex-col bg-white rounded-xl overflow-hidden hover:shadow-xl transition-shadow duration-300 relative border border-transparent hover:border-gray-100"
+                className="group flex flex-col items-center text-center transition-all duration-500"
               >
-                <div className="relative aspect-[4/5] overflow-hidden bg-gray-100 rounded-t-[12px]">
+                <div className="relative aspect-[3/4] overflow-hidden bg-white w-full shadow-sm mb-5 group-hover:shadow-xl transition-shadow duration-500">
                   <img 
                     src={product.image} 
                     alt={product.name} 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 ease-out"
                   />
                   {/* Badge */}
                   {index % 3 === 0 && (
-                    <div className="absolute top-3 left-3 bg-[#6B0F2B] text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full shadow-lg">
-                      Destacado
+                    <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-wine-black text-[8px] font-black uppercase tracking-[0.2em] px-3 py-1.5 shadow-sm">
+                      Recomendado
                     </div>
                   )}
                   {index % 5 === 0 && (
-                    <div className="absolute top-3 right-3 bg-[#EA580C] text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full shadow-lg">
-                      Oferta
+                    <div className="absolute top-4 right-4 bg-burgundy/90 backdrop-blur-sm text-white text-[8px] font-black uppercase tracking-[0.2em] px-3 py-1.5 shadow-sm">
+                      Nuevo
                     </div>
                   )}
                   
                   {/* Hover Add to cart */}
-                  <div className="absolute bottom-0 left-0 w-full p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                  <div className="absolute bottom-0 left-0 w-full p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out">
                     <button 
                       onClick={(e) => handleAddToCart(e, product)}
-                      className="w-full bg-[#6B0F2B] text-white py-3.5 rounded-md font-sans font-bold uppercase tracking-widest text-[11px] text-center shadow-lg hover:bg-opacity-90"
+                      className="w-full bg-wine-black text-white py-3 font-sans font-bold uppercase tracking-[0.2em] text-[9px] text-center shadow-lg hover:bg-black transition-colors"
                     >
-                      Agregar al carro
+                      Añadir a la bolsa
                     </button>
                   </div>
                 </div>
                 
-                <div className="p-4 flex flex-col gap-1.5">
-                  <h3 className="font-sans font-medium text-[15px] text-gray-900 leading-tight">
-                    {product.name}
-                  </h3>
-                  <div className="flex items-center justify-between mt-1">
-                    <span className="font-serif italic text-lg text-[#6B0F2B]">
-                      ${product.basePrice.toLocaleString('es-CL')}
-                    </span>
-                    <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">
-                      Medium
-                    </span>
-                  </div>
-                </div>
+                <h3 className="font-serif italic text-lg md:text-xl text-wine-black leading-tight mb-1 group-hover:text-gray-600 transition-colors">
+                  {product.name}
+                </h3>
+                <span className="text-sm text-gray-500 font-light">
+                  ${product.basePrice.toLocaleString('es-CL')}
+                </span>
               </Link>
             ))}
           </div>
         ) : (
-          <div className="py-20 flex flex-col items-center justify-center text-center">
-            <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-sm mb-6 text-gray-300">
-              <IconMoodSad stroke={1.5} className="w-12 h-12" />
-            </div>
-            <h3 className="text-2xl font-serif italic text-gray-900 mb-2">No encontramos arreglos con esos filtros</h3>
-            <p className="text-gray-500 mb-8 max-w-sm">Prueba con otra categoría o escríbenos por WhatsApp para un diseño personalizado.</p>
+          <div className="py-32 flex flex-col items-center justify-center text-center">
+            <IconMoodSad stroke={1} className="w-16 h-16 text-gray-200 mb-6" />
+            <h3 className="text-3xl font-serif italic text-wine-black mb-3">Colección no encontrada</h3>
+            <p className="text-gray-400 mb-8 max-w-sm font-light text-sm">Explora otras categorías o contáctanos para un diseño a medida en nuestro taller.</p>
             <button 
               onClick={() => {
                 setSearchTerm("");
@@ -254,9 +252,9 @@ export default function Catalogo() {
                 setSelectedColor(null);
                 setSortBy("Más vendidos");
               }}
-              className="border-2 border-[#6B0F2B] text-[#6B0F2B] px-8 py-3 rounded-full font-bold uppercase tracking-widest text-[11px] hover:bg-[#6B0F2B] hover:text-white transition-all"
+              className="border-b border-wine-black text-wine-black pb-1 font-bold uppercase tracking-[0.15em] text-[10px] hover:text-gray-500 hover:border-gray-500 transition-colors"
             >
-              Limpiar filtros
+              Restablecer filtros
             </button>
           </div>
         )}

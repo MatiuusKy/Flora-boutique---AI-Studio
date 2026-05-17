@@ -12,16 +12,16 @@ import {
 
 export default function Nosotros() {
   return (
-    <div className="pt-24 pb-0 bg-[#FDFCFB]">
+    <div className="pt-24 pb-0 bg-warm-white">
       
       {/* Existing - Hero */}
       <section className="py-20 text-center px-6">
         <div className="max-w-4xl mx-auto space-y-8 flex flex-col items-center">
-          <span className="inline-block bg-[#6B0F2B]/10 text-[#6B0F2B] px-4 py-1.5 rounded-full text-[10px] uppercase font-bold tracking-widest">
+          <span className="inline-block bg-burgundy/10 text-burgundy px-4 py-1.5 rounded-full text-[10px] uppercase font-bold tracking-widest">
             Santiago - Zona Oriente
           </span>
-          <h1 className="text-4xl md:text-6xl font-serif italic text-gray-950 tracking-tighter">
-            Diseño floral boutique
+          <h1 className="text-4xl md:text-6xl font-serif italic text-wine-black tracking-tighter">
+            Flores a Domicilio y Diseño Floral Boutique en Santiago
           </h1>
           
           <div className="flex flex-wrap justify-center gap-4 py-8">
@@ -38,15 +38,15 @@ export default function Nosotros() {
           
           <div className="flex gap-12 pt-8 border-t border-gray-100">
             <div>
-              <p className="text-3xl font-serif italic text-[#6B0F2B]">100%</p>
+              <p className="text-3xl font-serif italic text-burgundy">100%</p>
               <p className="text-[10px] uppercase tracking-widest font-bold text-gray-500 mt-1">Premium</p>
             </div>
             <div>
-              <p className="text-3xl font-serif italic text-[#6B0F2B]">24h</p>
+              <p className="text-3xl font-serif italic text-burgundy">24h</p>
               <p className="text-[10px] uppercase tracking-widest font-bold text-gray-500 mt-1">Mismo día</p>
             </div>
             <div>
-              <p className="text-3xl font-serif italic text-[#6B0F2B]">5.0</p>
+              <p className="text-3xl font-serif italic text-burgundy">5.0</p>
               <p className="text-[10px] uppercase tracking-widest font-bold text-gray-500 mt-1">Reseñas</p>
             </div>
           </div>
@@ -56,7 +56,7 @@ export default function Nosotros() {
       {/* Existing - Timeline */}
       <section className="py-20 bg-white">
         <div className="max-w-4xl mx-auto px-6">
-          <h2 className="text-3xl font-serif italic text-center mb-16 text-[#6B0F2B]">Nuestra historia</h2>
+          <h2 className="text-3xl font-serif italic text-center mb-16 text-burgundy">Nuestra historia</h2>
           
           <div className="space-y-12 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-gray-200 before:to-transparent">
             {[
@@ -66,13 +66,13 @@ export default function Nosotros() {
               { year: "Hoy", title: "Boutique digital", desc: "Lanzamos nuestra nueva plataforma para facilitar la experiencia de compra, manteniendo la misma dedicación artesanal del primer día." }
             ].map((item, i) => (
               <div key={i} className={`relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active`}>
-                <div className="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-white shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 text-[#6B0F2B]">
+                <div className="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-white shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 text-burgundy">
                   <IconLeaf stroke={1.5} className="w-5 h-5" />
                 </div>
-                <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-6 rounded-2xl bg-[#F5F4F0] shadow-sm">
+                <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-6 rounded-2xl bg-linen shadow-sm">
                   <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-bold text-gray-900">{item.title}</h3>
-                    <span className="text-xs font-serif italic text-[#6B0F2B] font-medium px-2 py-1 bg-white rounded-full">{item.year}</span>
+                    <h3 className="font-bold text-wine-black">{item.title}</h3>
+                    <span className="text-xs font-serif italic text-burgundy font-medium px-2 py-1 bg-white rounded-full">{item.year}</span>
                   </div>
                   <p className="text-sm text-gray-500 leading-relaxed">{item.desc}</p>
                 </div>
@@ -83,7 +83,7 @@ export default function Nosotros() {
       </section>
 
       {/* New N1 — La persona detrás de Flora */}
-      <section className="py-24 bg-[#F5F4F0]">
+      <section className="py-24 bg-sage/10">
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 items-center">
             <div className="relative aspect-[3/4] rounded-[2rem] overflow-hidden shadow-xl">
@@ -94,8 +94,8 @@ export default function Nosotros() {
               />
             </div>
             <div className="space-y-6">
-              <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-[#6B0F2B]">Nuestra fundadora</span>
-              <h2 className="text-4xl md:text-5xl font-serif text-gray-950">
+              <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-burgundy">Nuestra fundadora</span>
+              <h2 className="text-4xl md:text-5xl font-serif text-wine-black">
                 María José <span className="italic relative z-10">Pérez</span>
               </h2>
               <div className="space-y-4 text-gray-600 leading-relaxed">
@@ -106,7 +106,7 @@ export default function Nosotros() {
                   "Trabajamos de la mano con productores locales e internacionales para seleccionar solo los tallos más fuertes y hermosos. Cada creación que sale de nuestro taller lleva un pedacito de mi corazón."
                 </p>
               </div>
-              <blockquote className="text-2xl font-serif italic text-[#6B0F2B] pt-6 border-t border-gray-200">
+              <blockquote className="text-2xl font-serif italic text-burgundy pt-6 border-t border-gray-200">
                 "Cada arreglo es una conversación sin palabras"
               </blockquote>
             </div>
@@ -117,38 +117,38 @@ export default function Nosotros() {
       {/* Existing - Lo que nos hace únicos (Fix N1 applied) */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-3xl font-serif italic text-center mb-16 text-[#6B0F2B]">Lo que nos hace únicos</h2>
+          <h2 className="text-3xl font-serif italic text-center mb-16 text-burgundy">Lo que nos hace únicos</h2>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="bg-[#F5F4F0] p-8 rounded-[2rem] text-center">
-              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-6 text-[#6B0F2B] shadow-sm">
+            <div className="bg-linen p-8 rounded-[2rem] text-center">
+              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-6 text-burgundy shadow-sm">
                 <IconLeaf stroke={1.5} className="w-8 h-8" />
               </div>
-              <h3 className="font-bold text-gray-900 mb-3">Frescura garantizada</h3>
+              <h3 className="font-bold text-wine-black mb-3">Frescura garantizada</h3>
               <p className="text-sm text-gray-500">Flores compradas directamente cada madrugada en el mercado.</p>
             </div>
             
-            <div className="bg-[#F5F4F0] p-8 rounded-[2rem] text-center">
-              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-6 text-[#6B0F2B] shadow-sm">
+            <div className="bg-linen p-8 rounded-[2rem] text-center">
+              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-6 text-burgundy shadow-sm">
                 <IconHeart stroke={1.5} className="w-8 h-8" />
               </div>
-              <h3 className="font-bold text-gray-900 mb-3">Diseño de autor</h3>
+              <h3 className="font-bold text-wine-black mb-3">Diseño de autor</h3>
               <p className="text-sm text-gray-500">Arreglos armados a mano, sin procesos industriales. Cada uno es único.</p>
             </div>
             
-            <div className="bg-[#F5F4F0] p-8 rounded-[2rem] text-center">
-              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-6 text-[#6B0F2B] shadow-sm">
+            <div className="bg-linen p-8 rounded-[2rem] text-center">
+              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-6 text-burgundy shadow-sm">
                 <IconSparkles stroke={1.5} className="w-8 h-8" />
               </div>
-              <h3 className="font-bold text-gray-900 mb-3">Calidad Premium</h3>
+              <h3 className="font-bold text-wine-black mb-3">Calidad Premium</h3>
               <p className="text-sm text-gray-500">Seleccionamos rosas ecuatorianas y tulipanes de importación superior.</p>
             </div>
             
-            <div className="bg-[#F5F4F0] p-8 rounded-[2rem] text-center">
-               <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-6 text-[#6B0F2B] shadow-sm">
+            <div className="bg-linen p-8 rounded-[2rem] text-center">
+               <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-6 text-burgundy shadow-sm">
                  <IconTruckDelivery stroke={1.5} className="w-8 h-8" />
                </div>
-               <h3 className="font-bold text-gray-900 mb-3">Entrega confiable</h3>
+               <h3 className="font-bold text-wine-black mb-3">Entrega confiable</h3>
                <p className="text-sm text-gray-500">Packaging que protege tu arreglo para que llegue intacto a destino.</p>
             </div>
           </div>
@@ -156,28 +156,28 @@ export default function Nosotros() {
       </section>
 
       {/* New N2 — Nuestro proceso */}
-      <section className="py-20 bg-[#1A1A1A] text-white">
+      <section className="py-20 bg-wine-black text-white">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16 space-y-4">
-            <h4 className="text-[10px] uppercase font-bold tracking-[0.2em] text-[#6B0F2B] bg-[#6B0F2B]/20 inline-block px-3 py-1 rounded-full">Nuestro proceso</h4>
+            <h4 className="text-[10px] uppercase font-bold tracking-[0.2em] text-burgundy bg-burgundy/20 inline-block px-3 py-1 rounded-full">Nuestro proceso</h4>
             <h2 className="text-3xl md:text-5xl font-serif italic">Flores que llegan frescas siempre</h2>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-white/5 border border-white/10 p-8 rounded-3xl flex flex-col items-center text-center">
-              <IconShoppingBag stroke={1.5} className="w-10 h-10 text-[#6B0F2B] mb-6" />
+              <IconShoppingBag stroke={1.5} className="w-10 h-10 text-burgundy mb-6" />
               <h3 className="font-bold text-lg mb-3">Selección en mercado</h3>
               <p className="text-sm text-white/60">Compramos directamente en el Mercado de las Flores cada madrugada.</p>
             </div>
             
             <div className="bg-white/5 border border-white/10 p-8 rounded-3xl flex flex-col items-center text-center">
-              <IconScissors stroke={1.5} className="w-10 h-10 text-[#6B0F2B] mb-6" />
+              <IconScissors stroke={1.5} className="w-10 h-10 text-burgundy mb-6" />
               <h3 className="font-bold text-lg mb-3">Diseño artesanal</h3>
               <p className="text-sm text-white/60">Cada arreglo se diseña a mano según la ocasión y las preferencias del cliente.</p>
             </div>
             
             <div className="bg-white/5 border border-white/10 p-8 rounded-3xl flex flex-col items-center text-center">
-              <IconGift stroke={1.5} className="w-10 h-10 text-[#6B0F2B] mb-6" />
+              <IconGift stroke={1.5} className="w-10 h-10 text-burgundy mb-6" />
               <h3 className="font-bold text-lg mb-3">Entrega con cuidado</h3>
               <p className="text-sm text-white/60">Embalaje especial y transporte dedicado para que lleguen perfectas a su destino.</p>
             </div>
@@ -186,14 +186,14 @@ export default function Nosotros() {
       </section>
 
       {/* Existing - Galería Arreglos con alma (Fix N2 applied) */}
-      <section className="py-20 bg-white overflow-hidden">
+      <section className="py-20 bg-burgundy-mist overflow-hidden">
         <div className="max-w-[1600px] mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-end mb-12">
             <div>
-              <h2 className="text-3xl md:text-5xl font-serif italic text-gray-950 mb-4">Arreglos con alma</h2>
+              <h2 className="text-3xl md:text-5xl font-serif italic text-wine-black mb-4">Arreglos con alma</h2>
               <p className="text-gray-500 max-w-xl">Un vistazo a nuestras creaciones favoritas en el taller.</p>
             </div>
-            <a href="https://instagram.com/floraboutique.cl" target="_blank" rel="noreferrer" className="hidden md:flex items-center gap-2 text-[#6B0F2B] font-bold text-xs uppercase tracking-widest hover:opacity-80 transition-opacity">
+            <a href="https://instagram.com/floraboutique.cl" target="_blank" rel="noreferrer" className="hidden md:flex items-center gap-2 text-burgundy font-bold text-xs uppercase tracking-widest hover:opacity-80 transition-opacity">
               Síguenos @floraboutique.cl <IconBrandInstagram className="w-4 h-4" />
             </a>
           </div>
@@ -221,18 +221,18 @@ export default function Nosotros() {
             ))}
           </div>
           
-          <a href="https://instagram.com/floraboutique.cl" target="_blank" rel="noreferrer" className="flex justify-center md:hidden items-center gap-2 text-[#6B0F2B] font-bold text-xs uppercase tracking-widest hover:opacity-80 transition-opacity mt-8">
+          <a href="https://instagram.com/floraboutique.cl" target="_blank" rel="noreferrer" className="flex justify-center md:hidden items-center gap-2 text-burgundy font-bold text-xs uppercase tracking-widest hover:opacity-80 transition-opacity mt-8">
             Síguenos @floraboutique.cl <IconBrandInstagram className="w-4 h-4" />
           </a>
         </div>
       </section>
 
       {/* New N3 — Reseñas (reused pattern) */}
-      <section className="py-20 bg-[#F5F4F0]">
+      <section className="py-20 bg-linen">
         <div className="max-w-7xl mx-auto px-6 space-y-16">
           <div className="text-center space-y-4">
-            <h4 className="text-[10px] uppercase tracking-[0.8em] font-black text-[#6B0F2B]">RESEÑAS REALES</h4>
-            <h2 className="text-4xl md:text-6xl font-serif italic text-gray-950 tracking-tighter">Flores que hablan por sí solas</h2>
+            <h4 className="text-[10px] uppercase tracking-[0.8em] font-black text-burgundy">RESEÑAS REALES</h4>
+            <h2 className="text-4xl md:text-6xl font-serif italic text-wine-black tracking-tighter">Flores que hablan por sí solas</h2>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
@@ -250,12 +250,12 @@ export default function Nosotros() {
                 transition={{ delay: i * 0.1 }}
                 className="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-sm space-y-6"
               >
-                <div className="flex text-[#6B0F2B] gap-1">
+                <div className="flex text-burgundy gap-1">
                   {[1,2,3,4,5].map(star => <svg key={star} className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>)}
                 </div>
                 <p className="text-lg md:text-xl font-serif italic text-gray-700 leading-relaxed">"{review.text}"</p>
                 <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                  <span className="font-bold text-gray-900">{review.name}</span>
+                  <span className="font-bold text-wine-black">{review.name}</span>
                   <span className="text-xs text-gray-400">{review.date}</span>
                 </div>
               </motion.div>
